@@ -21,18 +21,18 @@ export const LanguageSwitcher = () => {
                 <Button variant="ghost" size="icon" className="gap-2 w-auto px-2">
                     <Languages className="h-5 w-5" />
                     <span className="hidden sm:inline text-xs font-semibold uppercase">
-                        {i18n.language.split("-")[0]}
+                        {i18n.language?.split("-")[0] || "en"}
                     </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => changeLanguage("en")} className="gap-2">
-                    <span className={i18n.language.startsWith("en") ? "font-bold text-primary" : ""}>
+                    <span className={i18n.language?.startsWith("en") ? "font-bold text-primary" : ""}>
                         {t("common.english")}
                     </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => changeLanguage("bn")} className="gap-2">
-                    <span className={i18n.language.startsWith("bn") ? "font-bold text-primary" : ""}>
+                    <span className={i18n.language?.startsWith("bn") ? "font-bold text-primary" : ""}>
                         {t("common.bengali")}
                     </span>
                 </DropdownMenuItem>
