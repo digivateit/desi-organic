@@ -61,7 +61,7 @@ const BlogDetail = () => {
   // Content might be an array or a string (if from DB)
   const paragraphs = Array.isArray(displayContent) ? displayContent : (displayContent ? [displayContent] : []);
 
-  const otherPosts = relatedPosts.filter(p => p.id !== id).slice(0, 3);
+
 
   return (
     <div className="min-h-screen flex flex-col">
