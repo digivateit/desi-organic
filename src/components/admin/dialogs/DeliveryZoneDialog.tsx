@@ -70,16 +70,16 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
       if (zone) {
         const { error } = await supabase.from("delivery_zones").update(data).eq("id", zone.id);
         if (error) throw error;
-        toast.success("জোন আপডেট হয়েছে");
+        toast.success("Zone updated");
       } else {
         const { error } = await supabase.from("delivery_zones").insert(data);
         if (error) throw error;
-        toast.success("জোন যোগ হয়েছে");
+        toast.success("Zone added");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-delivery-zones"] });
       onOpenChange(false);
     } catch (error) {
-      toast.error("কিছু সমস্যা হয়েছে");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -89,11 +89,11 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{zone ? "জোন এডিট করুন" : "নতুন ডেলিভারি জোন"}</DialogTitle>
+          <DialogTitle>{zone ? "Edit Zone" : "New Delivery Zone"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>নাম (English)</Label>
+            <Label>Name (English)</Label>
             <Input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -101,7 +101,7 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
             />
           </div>
           <div className="space-y-2">
-            <Label>নাম (বাংলা)</Label>
+            <Label>Name (Bengali)</Label>
             <Input
               value={form.name_bn}
               onChange={(e) => setForm({ ...form, name_bn: e.target.value })}
@@ -110,7 +110,7 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>ডেলিভারি চার্জ (৳)</Label>
+              <Label>Delivery Charge (৳)</Label>
               <Input
                 type="number"
                 value={form.charge}
@@ -119,7 +119,7 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
               />
             </div>
             <div className="space-y-2">
-              <Label>ফ্রি ডেলিভারি (৳ উপরে)</Label>
+              <Label>Free Delivery (above ৳)</Label>
               <Input
                 type="number"
                 value={form.min_order_free_delivery}
@@ -128,7 +128,7 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
             </div>
           </div>
           <div className="space-y-2">
-            <Label>আনুমানিক দিন</Label>
+            <Label>Estimated Days</Label>
             <Input
               type="number"
               value={form.estimated_days}
@@ -140,14 +140,14 @@ export const DeliveryZoneDialog = ({ open, onOpenChange, zone }: DeliveryZoneDia
               checked={form.is_active}
               onCheckedChange={(v) => setForm({ ...form, is_active: v })}
             />
-            <Label>সক্রিয়</Label>
+            <Label>Active</Label>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              {loading ? "Saving..." : "Save Zone"}
             </Button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -6,6 +7,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const Cart = () => {
+  const { t, i18n } = useTranslation();
   const {
     items,
     removeItem,
@@ -19,7 +21,7 @@ const Cart = () => {
   const { percentage: discountPercentage, amount: discountAmount } = getQuantityDiscount();
   const total = subtotal - discountAmount;
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   if (items.length === 0) {
     return (
@@ -31,11 +33,11 @@ const Cart = () => {
             <div className="w-24 h-24 mx-auto rounded-full bg-muted flex items-center justify-center">
               <ShoppingBag className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">আপনার কার্ট খালি</h1>
-            <p className="text-muted-foreground">এখনো কোনো পণ্য যোগ করা হয়নি</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("cart.empty_title")}</h1>
+            <p className="text-muted-foreground">{t("cart.empty_desc")}</p>
             <Link to="/shop">
               <Button className="mt-4">
-                কেনাকাটা শুরু করুন
+                {t("cart.start_shopping")}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>
@@ -54,7 +56,7 @@ const Cart = () => {
       <main className="flex-1 py-8">
         <div className="container">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-8">
-            শপিং কার্ট
+            {t("cart.title")}
           </h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,7 +71,7 @@ const Cart = () => {
                   <Link to={`/product/${item.productId}`} className="flex-shrink-0">
                     <img
                       src={item.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop"}
-                      alt={item.name_bn}
+                      alt={i18n.language === "bn" ? item.name_bn : (item.name || item.name_bn)}
                       className="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover"
                     />
                   </Link>
@@ -80,19 +82,19 @@ const Cart = () => {
                       <div>
                         <Link to={`/product/${item.productId}`}>
                           <h3 className="font-semibold text-foreground hover:text-primary transition-colors line-clamp-1">
-                            {item.name_bn}
+                            {i18n.language === "bn" ? item.name_bn : (item.name || item.name_bn)}
                           </h3>
                         </Link>
                         {item.variant_name_bn && (
                           <p className="text-sm text-muted-foreground">
-                            {item.variant_name_bn}
+                            {i18n.language === "bn" ? item.variant_name_bn : (item.variant_name || item.variant_name_bn)}
                           </p>
                         )}
                       </div>
                       <button
                         onClick={() => removeItem(item.id)}
                         className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                        aria-label="মুছে ফেলুন"
+                        aria-label={t("cart.remove")}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -133,12 +135,12 @@ const Cart = () => {
             <div className="lg:col-span-1">
               <div className="bg-card rounded-xl p-6 border border-border sticky top-24">
                 <h2 className="text-lg font-bold text-foreground mb-4">
-                  অর্ডার সারাংশ
+                  {t("cart.order_summary")}
                 </h2>
 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">সাবটোটাল ({getItemCount()}টি পণ্য)</span>
+                    <span className="text-muted-foreground">{t("cart.subtotal")} ({getItemCount()}{t("cart.items_suffix")})</span>
                     <span className="font-medium">{formatPrice(subtotal)}</span>
                   </div>
 
@@ -150,7 +152,7 @@ const Cart = () => {
                   )}
 
                   <div className="border-t border-border pt-3 flex justify-between text-base">
-                    <span className="font-semibold">মোট</span>
+                    <span className="font-semibold">{t("cart.total")}</span>
                     <span className="font-bold text-primary">{formatPrice(total)}</span>
                   </div>
                 </div>
@@ -159,21 +161,21 @@ const Cart = () => {
                 {discountPercentage === 0 && (
                   <div className="mt-4 p-3 bg-primary/10 rounded-lg text-sm">
                     <p className="text-primary font-medium">
-                      💡 ৩টি পণ্য কিনলে ৫% ছাড়, ৫টি কিনলে ১০% ছাড়!
+                      {t("cart.discount_info")}
                     </p>
                   </div>
                 )}
 
                 <Link to="/checkout" className="block mt-6">
                   <Button className="w-full" size="lg">
-                    চেকআউট করুন
+                    {t("cart.checkout")}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
 
                 <Link to="/products" className="block mt-3">
                   <Button variant="outline" className="w-full">
-                    কেনাকাটা চালিয়ে যান
+                    {t("cart.continue_shopping")}
                   </Button>
                 </Link>
               </div>

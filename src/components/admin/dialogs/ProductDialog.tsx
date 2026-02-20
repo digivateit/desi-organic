@@ -104,16 +104,16 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
       if (product) {
         const { error } = await supabase.from("products").update(data).eq("id", product.id);
         if (error) throw error;
-        toast.success("পণ্য আপডেট হয়েছে");
+        toast.success("Product updated");
       } else {
         const { error } = await supabase.from("products").insert(data);
         if (error) throw error;
-        toast.success("পণ্য যোগ হয়েছে");
+        toast.success("Product added");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       onOpenChange(false);
     } catch (error) {
-      toast.error("কিছু সমস্যা হয়েছে");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -123,12 +123,12 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{product ? "পণ্য এডিট করুন" : "নতুন পণ্য যোগ করুন"}</DialogTitle>
+          <DialogTitle>{product ? "Edit Product" : "Add New Product"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>নাম (English)</Label>
+              <Label>Name (English)</Label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -136,7 +136,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
               />
             </div>
             <div className="space-y-2">
-              <Label>নাম (বাংলা)</Label>
+              <Label>Name (Bengali)</Label>
               <Input
                 value={form.name_bn}
                 onChange={(e) => setForm({ ...form, name_bn: e.target.value })}
@@ -147,7 +147,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>স্লাগ</Label>
+              <Label>Slug</Label>
               <Input
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
@@ -155,10 +155,10 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
               />
             </div>
             <div className="space-y-2">
-              <Label>ক্যাটাগরি</Label>
+              <Label>Category</Label>
               <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="ক্যাটাগরি বাছাই করুন" />
+                  <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories?.map((cat: any) => (
@@ -171,7 +171,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>দাম (৳)</Label>
+              <Label>Price (৳)</Label>
               <Input
                 type="number"
                 value={form.base_price}
@@ -180,7 +180,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
               />
             </div>
             <div className="space-y-2">
-              <Label>সেল দাম (৳)</Label>
+              <Label>Sale Price (৳)</Label>
               <Input
                 type="number"
                 value={form.sale_price}
@@ -188,7 +188,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
               />
             </div>
             <div className="space-y-2">
-              <Label>স্টক</Label>
+              <Label>Stock</Label>
               <Input
                 type="number"
                 value={form.stock_quantity}
@@ -198,7 +198,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>বিবরণ (বাংলা)</Label>
+            <Label>Description (Bengali)</Label>
             <Textarea
               value={form.description_bn}
               onChange={(e) => setForm({ ...form, description_bn: e.target.value })}
@@ -207,7 +207,7 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>ছবির URL (কমা দিয়ে আলাদা করুন)</Label>
+            <Label>Image URLs (comma separated)</Label>
             <Textarea
               value={form.images.join(", ")}
               onChange={(e) => setForm({ ...form, images: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
@@ -222,23 +222,23 @@ export const ProductDialog = ({ open, onOpenChange, product }: ProductDialogProp
                 checked={form.is_featured}
                 onCheckedChange={(v) => setForm({ ...form, is_featured: v })}
               />
-              <Label>বিশেষ পণ্য</Label>
+              <Label>Featured Product</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={form.is_active}
                 onCheckedChange={(v) => setForm({ ...form, is_active: v })}
               />
-              <Label>সক্রিয়</Label>
+              <Label>Active</Label>
             </div>
           </div>
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              {loading ? "Saving..." : "Save Product"}
             </Button>
           </div>
         </form>

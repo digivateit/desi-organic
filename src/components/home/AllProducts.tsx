@@ -1,11 +1,12 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import ProductCard from "./ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AllProducts = () => {
+  const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(8);
 
   const { data: allProducts = [], isLoading } = useQuery({
@@ -16,7 +17,7 @@ const AllProducts = () => {
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data;
     },
@@ -64,10 +65,10 @@ const AllProducts = () => {
       <div className="container">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            সকল পণ্য
+            {t("products.all_title")}
           </h2>
           <p className="text-muted-foreground mt-1">
-            আমাদের সম্পূর্ণ অর্গানিক পণ্যের তালিকা
+            {t("products.all_subtitle")}
           </p>
         </div>
 
@@ -76,6 +77,7 @@ const AllProducts = () => {
             <ProductCard
               key={product.id}
               id={product.id}
+              name={product.name}
               name_bn={product.name_bn}
               slug={product.slug}
               image_url={product.images?.[0] || ''}
@@ -95,7 +97,7 @@ const AllProducts = () => {
               onClick={handleLoadMore}
               className="px-8"
             >
-              আরো দেখুন
+              {t("products.load_more")}
             </Button>
           </div>
         )}

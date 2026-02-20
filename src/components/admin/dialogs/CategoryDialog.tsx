@@ -66,16 +66,16 @@ export const CategoryDialog = ({ open, onOpenChange, category }: CategoryDialogP
       if (category) {
         const { error } = await supabase.from("categories").update(data).eq("id", category.id);
         if (error) throw error;
-        toast.success("ক্যাটাগরি আপডেট হয়েছে");
+        toast.success("Category updated");
       } else {
         const { error } = await supabase.from("categories").insert(data);
         if (error) throw error;
-        toast.success("ক্যাটাগরি যোগ হয়েছে");
+        toast.success("Category added");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       onOpenChange(false);
     } catch (error) {
-      toast.error("কিছু সমস্যা হয়েছে");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -85,11 +85,11 @@ export const CategoryDialog = ({ open, onOpenChange, category }: CategoryDialogP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{category ? "ক্যাটাগরি এডিট করুন" : "নতুন ক্যাটাগরি"}</DialogTitle>
+          <DialogTitle>{category ? "Edit Category" : "New Category"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>নাম (English)</Label>
+            <Label>Name (English)</Label>
             <Input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -97,7 +97,7 @@ export const CategoryDialog = ({ open, onOpenChange, category }: CategoryDialogP
             />
           </div>
           <div className="space-y-2">
-            <Label>নাম (বাংলা)</Label>
+            <Label>Name (Bengali)</Label>
             <Input
               value={form.name_bn}
               onChange={(e) => setForm({ ...form, name_bn: e.target.value })}
@@ -105,14 +105,14 @@ export const CategoryDialog = ({ open, onOpenChange, category }: CategoryDialogP
             />
           </div>
           <div className="space-y-2">
-            <Label>স্লাগ</Label>
+            <Label>Slug</Label>
             <Input
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
             />
           </div>
           <div className="space-y-2">
-            <Label>ছবির URL</Label>
+            <Label>Image URL</Label>
             <Input
               value={form.image_url}
               onChange={(e) => setForm({ ...form, image_url: e.target.value })}
@@ -123,14 +123,14 @@ export const CategoryDialog = ({ open, onOpenChange, category }: CategoryDialogP
               checked={form.is_active}
               onCheckedChange={(v) => setForm({ ...form, is_active: v })}
             />
-            <Label>সক্রিয়</Label>
+            <Label>Active</Label>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              {loading ? "Saving..." : "Save Category"}
             </Button>
           </div>
         </form>

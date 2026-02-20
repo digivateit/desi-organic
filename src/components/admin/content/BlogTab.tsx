@@ -33,16 +33,16 @@ const BlogTab = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">লোড হচ্ছে...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">ব্লগ পোস্ট ({posts?.length || 0})</h2>
+        <h2 className="text-lg font-semibold">Blog Posts ({posts?.length || 0})</h2>
         <Button onClick={() => { setEditPost(null); setDialogOpen(true); }} className="gap-2">
           <Plus className="h-4 w-4" />
-          নতুন পোস্ট
+          New Post
         </Button>
       </div>
 
@@ -62,14 +62,14 @@ const BlogTab = () => {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-medium truncate">{post.title}</h3>
                     <Badge variant={post.is_published ? "default" : "secondary"}>
-                      {post.is_published ? "প্রকাশিত" : "ড্রাফট"}
+                      {post.is_published ? "Published" : "Draft"}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-1">
                     {post.excerpt}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {post.author} • {post.category} • {new Date(post.created_at).toLocaleDateString("bn-BD")}
+                    {post.author} • {post.category} • {new Date(post.created_at).toLocaleDateString("en-US")}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -77,7 +77,7 @@ const BlogTab = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => togglePublish(post)}
-                    title={post.is_published ? "আনপাবলিশ" : "পাবলিশ"}
+                    title={post.is_published ? "Unpublish" : "Publish"}
                   >
                     {post.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -104,7 +104,7 @@ const BlogTab = () => {
 
         {!posts?.length && (
           <div className="text-center py-12 text-muted-foreground">
-            কোন ব্লগ পোস্ট নেই। নতুন পোস্ট যোগ করুন।
+            No blog posts found. Add a new post.
           </div>
         )}
       </div>
@@ -118,13 +118,13 @@ const BlogTab = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>পোস্ট মুছে ফেলবেন?</AlertDialogTitle>
+            <AlertDialogTitle>Delete post?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
@@ -132,7 +132,7 @@ const BlogTab = () => {
                 setDeleteId(null);
               }}
             >
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

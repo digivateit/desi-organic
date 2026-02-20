@@ -81,15 +81,15 @@ const PolicyTab = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">লোড হচ্ছে...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   const policyPages = [
-    { key: "return_policy", title: "রিটার্ন পলিসি", type: "sections" },
-    { key: "shipping_policy", title: "শিপিং পলিসি", type: "sections" },
-    { key: "terms", title: "টার্মস & কন্ডিশন", type: "sections" },
-    { key: "privacy_policy", title: "প্রাইভেসি পলিসি", type: "sections" },
-    { key: "faq", title: "সাধারণ জিজ্ঞাসা (FAQ)", type: "questions" },
+    { key: "return_policy", title: "Return Policy", type: "sections" },
+    { key: "shipping_policy", title: "Shipping Policy", type: "sections" },
+    { key: "terms", title: "Terms & Conditions", type: "sections" },
+    { key: "privacy_policy", title: "Privacy Policy", type: "sections" },
+    { key: "faq", title: "FAQ", type: "questions" },
   ];
 
   return (
@@ -107,7 +107,7 @@ const PolicyTab = () => {
                     <Card key={idx}>
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between items-center">
-                          <Label>সেকশন {idx + 1}</Label>
+                          <Label>Section {idx + 1}</Label>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -118,12 +118,12 @@ const PolicyTab = () => {
                           </Button>
                         </div>
                         <Input
-                          placeholder="শিরোনাম"
+                          placeholder="Title"
                           value={section.title}
                           onChange={(e) => updateSection(page.key, idx, "title", e.target.value)}
                         />
                         <Textarea
-                          placeholder="বিস্তারিত"
+                          placeholder="Content"
                           value={section.content}
                           onChange={(e) => updateSection(page.key, idx, "content", e.target.value)}
                           rows={4}
@@ -134,11 +134,11 @@ const PolicyTab = () => {
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => addSection(page.key)} className="gap-2">
                       <Plus className="h-4 w-4" />
-                      সেকশন যোগ করুন
+                      Add Section
                     </Button>
                     <Button onClick={() => saveContent(page.key)} className="gap-2">
                       <Save className="h-4 w-4" />
-                      সংরক্ষণ করুন
+                      Save Changes
                     </Button>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ const PolicyTab = () => {
                     <Card key={idx}>
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between items-center">
-                          <Label>প্রশ্ন {idx + 1}</Label>
+                          <Label>Question {idx + 1}</Label>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -159,12 +159,12 @@ const PolicyTab = () => {
                           </Button>
                         </div>
                         <Input
-                          placeholder="প্রশ্ন"
+                          placeholder="Question"
                           value={q.question}
                           onChange={(e) => updateQuestion(page.key, idx, "question", e.target.value)}
                         />
                         <Textarea
-                          placeholder="উত্তর"
+                          placeholder="Answer"
                           value={q.answer}
                           onChange={(e) => updateQuestion(page.key, idx, "answer", e.target.value)}
                           rows={3}
@@ -175,11 +175,11 @@ const PolicyTab = () => {
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => addQuestion(page.key)} className="gap-2">
                       <Plus className="h-4 w-4" />
-                      প্রশ্ন যোগ করুন
+                      Add Question
                     </Button>
                     <Button onClick={() => saveContent(page.key)} className="gap-2">
                       <Save className="h-4 w-4" />
-                      সংরক্ষণ করুন
+                      Save Changes
                     </Button>
                   </div>
                 </div>

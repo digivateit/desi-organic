@@ -57,13 +57,13 @@ const AdminPayments = () => {
   const getPaymentStatusBadge = (status: string) => {
     switch (status) {
       case "paid":
-        return <Badge className="bg-green-500">পেইড</Badge>;
+        return <Badge className="bg-green-500">Paid</Badge>;
       case "partial":
-        return <Badge className="bg-yellow-500">আংশিক</Badge>;
+        return <Badge className="bg-yellow-500">Partial</Badge>;
       case "unpaid":
-        return <Badge variant="destructive">বকেয়া</Badge>;
+        return <Badge variant="destructive">Unpaid</Badge>;
       case "refunded":
-        return <Badge variant="secondary">রিফান্ড</Badge>;
+        return <Badge variant="secondary">Refunded</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -72,34 +72,34 @@ const AdminPayments = () => {
   const getPaymentMethodLabel = (method: string) => {
     switch (method) {
       case "cod":
-        return "ক্যাশ অন ডেলিভারি";
+        return "Cash on Delivery";
       case "bkash":
-        return "বিকাশ";
+        return "bKash";
       case "nagad":
-        return "নগদ";
+        return "Nagad";
       case "uddoktapay":
-        return "অনলাইন পেমেন্ট";
+        return "Online Payment";
       default:
         return method;
     }
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">লোড হচ্ছে...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">পেমেন্ট</h1>
-        <p className="text-muted-foreground">সব পেমেন্ট দেখুন ও পরিচালনা করুন</p>
+        <h1 className="text-2xl font-bold">Payments</h1>
+        <p className="text-muted-foreground">View and manage all payments</p>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">মোট বিক্রয়</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -108,7 +108,7 @@ const AdminPayments = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">পেইড</CardTitle>
+            <CardTitle className="text-sm font-medium">Paid</CardTitle>
             <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -117,7 +117,7 @@ const AdminPayments = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">বকেয়া</CardTitle>
+            <CardTitle className="text-sm font-medium">Unpaid</CardTitle>
             <Clock className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -126,7 +126,7 @@ const AdminPayments = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">আংশিক পেমেন্ট</CardTitle>
+            <CardTitle className="text-sm font-medium">Partial Payment</CardTitle>
             <CreditCard className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -140,7 +140,7 @@ const AdminPayments = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="অর্ডার নম্বর, নাম বা ফোন দিয়ে খুঁজুন..."
+            placeholder="Search by order number, name or phone..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -148,14 +148,14 @@ const AdminPayments = () => {
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="স্ট্যাটাস" />
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">সব স্ট্যাটাস</SelectItem>
-            <SelectItem value="paid">পেইড</SelectItem>
-            <SelectItem value="unpaid">বকেয়া</SelectItem>
-            <SelectItem value="partial">আংশিক</SelectItem>
-            <SelectItem value="refunded">রিফান্ড</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="unpaid">Unpaid</SelectItem>
+            <SelectItem value="partial">Partial</SelectItem>
+            <SelectItem value="refunded">Refunded</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -166,13 +166,13 @@ const AdminPayments = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>অর্ডার</TableHead>
-                <TableHead>গ্রাহক</TableHead>
-                <TableHead>পেমেন্ট মেথড</TableHead>
-                <TableHead>মোট</TableHead>
-                <TableHead>পেইড</TableHead>
-                <TableHead>স্ট্যাটাস</TableHead>
-                <TableHead>তারিখ</TableHead>
+                <TableHead>Order</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Payment Method</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Paid</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -188,23 +188,23 @@ const AdminPayments = () => {
                   <TableCell>{getPaymentMethodLabel(order.payment_method)}</TableCell>
                   <TableCell>৳{Number(order.total_amount).toLocaleString()}</TableCell>
                   <TableCell>
-                    {order.payment_status === "paid" 
+                    {order.payment_status === "paid"
                       ? `৳${Number(order.total_amount).toLocaleString()}`
                       : order.payment_status === "partial"
-                      ? `৳${Number(order.partial_payment_amount || 0).toLocaleString()}`
-                      : "৳০"
+                        ? `৳${Number(order.partial_payment_amount || 0).toLocaleString()}`
+                        : "৳0"
                     }
                   </TableCell>
                   <TableCell>{getPaymentStatusBadge(order.payment_status)}</TableCell>
                   <TableCell>
-                    {new Date(order.created_at).toLocaleDateString("bn-BD")}
+                    {new Date(order.created_at).toLocaleDateString("en-US")}
                   </TableCell>
                 </TableRow>
               ))}
               {!filteredOrders?.length && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    কোন পেমেন্ট পাওয়া যায়নি
+                    No payments found
                   </TableCell>
                 </TableRow>
               )}

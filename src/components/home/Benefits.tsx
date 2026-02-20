@@ -1,36 +1,38 @@
 import { Truck, Shield, Leaf, HeartHandshake, Clock, Award } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Benefits = () => {
+  const { t } = useTranslation();
   const benefits = [
     {
       icon: Leaf,
-      title: "১০০% অর্গানিক",
-      description: "সম্পূর্ণ প্রাকৃতিক ও রাসায়নিক মুক্ত পণ্য",
+      title: t("benefits.organic_title"),
+      description: t("benefits.organic_desc"),
     },
     {
       icon: Truck,
-      title: "দ্রুত ডেলিভারি",
-      description: "ঢাকায় ২৪-৪৮ ঘণ্টা, ঢাকার বাইরে ৩-৫ দিন",
+      title: t("benefits.delivery_title"),
+      description: t("benefits.delivery_desc"),
     },
     {
       icon: Shield,
-      title: "মানি ব্যাক গ্যারান্টি",
-      description: "সন্তুষ্ট না হলে সম্পূর্ণ টাকা ফেরত",
+      title: t("benefits.moneyback_title"),
+      description: t("benefits.moneyback_desc"),
     },
     {
       icon: HeartHandshake,
-      title: "সরাসরি কৃষক থেকে",
-      description: "মধ্যস্বত্বভোগী ছাড়াই সেরা দাম",
+      title: t("benefits.farmer_title"),
+      description: t("benefits.farmer_desc"),
     },
     {
       icon: Clock,
-      title: "২৪/৭ সাপোর্ট",
-      description: "যেকোনো সমস্যায় আমরা আছি আপনার পাশে",
+      title: t("benefits.support_title"),
+      description: t("benefits.support_desc"),
     },
     {
       icon: Award,
-      title: "সেরা মান",
-      description: "কঠোর মান নিয়ন্ত্রণে সেরা পণ্য",
+      title: t("benefits.quality_title"),
+      description: t("benefits.quality_desc"),
     },
   ];
 
@@ -39,10 +41,10 @@ const Benefits = () => {
       <div className="container">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            কেন আমাদের বেছে নেবেন?
+            {t("benefits.title")}
           </h2>
           <p className="text-muted-foreground mt-2">
-            আপনার বিশ্বাসই আমাদের পুঁজি
+            {t("benefits.subtitle")}
           </p>
         </div>
 

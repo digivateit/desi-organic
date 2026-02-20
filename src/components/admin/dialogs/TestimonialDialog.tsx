@@ -30,9 +30,9 @@ import {
 import { useCreateTestimonial, useUpdateTestimonial } from "@/hooks/useCMSData";
 
 const formSchema = z.object({
-  customer_name: z.string().min(1, "নাম আবশ্যক"),
+  customer_name: z.string().min(1, "Name is required"),
   rating: z.number().min(1).max(5),
-  comment: z.string().min(1, "মন্তব্য আবশ্যক"),
+  comment: z.string().min(1, "Comment is required"),
   product_name: z.string().optional(),
   avatar_url: z.string().optional(),
   is_active: z.boolean().default(true),
@@ -104,7 +104,7 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "রিভিউ সম্পাদনা" : "নতুন রিভিউ"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Edit Review" : "New Review"}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -114,9 +114,9 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               name="customer_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>গ্রাহকের নাম *</FormLabel>
+                  <FormLabel>Customer Name *</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="যেমন: রহিম উদ্দিন" />
+                    <Input {...field} placeholder="e.g. Rahim Uddin" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,7 +128,7 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               name="rating"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>রেটিং *</FormLabel>
+                  <FormLabel>Rating *</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value.toString()}
@@ -156,9 +156,9 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               name="comment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>মন্তব্য *</FormLabel>
+                  <FormLabel>Comment *</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={3} placeholder="গ্রাহকের মন্তব্য..." />
+                    <Textarea {...field} rows={3} placeholder="Customer's feedback..." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -170,9 +170,9 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               name="product_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>পণ্যের নাম (ঐচ্ছিক)</FormLabel>
+                  <FormLabel>Product Name (Optional)</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="যেমন: সুন্দরবনের খাঁটি মধু" />
+                    <Input {...field} placeholder="e.g. Pure Honey" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -184,7 +184,7 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               name="sort_order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ক্রম</FormLabel>
+                  <FormLabel>Order</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -203,9 +203,9 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">সক্রিয়</FormLabel>
+                    <FormLabel className="text-base">Active</FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      রিভিউ ওয়েবসাইটে দেখাবে
+                      Will be visible on the website
                     </p>
                   </div>
                   <FormControl>
@@ -217,10 +217,10 @@ const TestimonialDialog = ({ open, onOpenChange, testimonial }: TestimonialDialo
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                বাতিল
+                Cancel
               </Button>
               <Button type="submit" disabled={createTestimonial.isPending || updateTestimonial.isPending}>
-                {isEditing ? "আপডেট করুন" : "যোগ করুন"}
+                {isEditing ? "Update" : "Add"}
               </Button>
             </div>
           </form>

@@ -62,12 +62,12 @@ const AdminDeliveryZones = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">ডেলিভারি জোন</h1>
-          <p className="text-muted-foreground">ডেলিভারি চার্জ পরিচালনা করুন ({zones?.length || 0}টি)</p>
+          <h1 className="text-2xl font-bold text-foreground">Delivery Zones</h1>
+          <p className="text-muted-foreground">Manage delivery charges ({zones?.length || 0} total)</p>
         </div>
         <Button className="gap-2" onClick={() => { setEditZone(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
-          নতুন জোন
+          New Zone
         </Button>
       </div>
 
@@ -75,12 +75,12 @@ const AdminDeliveryZones = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>জোন</TableHead>
-              <TableHead className="text-right">চার্জ</TableHead>
-              <TableHead className="text-right">ফ্রি ডেলিভারি</TableHead>
-              <TableHead className="text-center">সময়</TableHead>
-              <TableHead className="text-center">সক্রিয়</TableHead>
-              <TableHead className="text-right">অ্যাকশন</TableHead>
+              <TableHead>Zone</TableHead>
+              <TableHead className="text-right">Charge</TableHead>
+              <TableHead className="text-right">Free Delivery</TableHead>
+              <TableHead className="text-center">Time</TableHead>
+              <TableHead className="text-center">Active</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,9 +98,9 @@ const AdminDeliveryZones = () => {
                   ৳{zone.charge}
                 </TableCell>
                 <TableCell className="text-right">
-                  {zone.min_order_free_delivery ? `৳${zone.min_order_free_delivery}+` : "প্রযোজ্য নয়"}
+                  {zone.min_order_free_delivery ? `৳${zone.min_order_free_delivery}+` : "N/A"}
                 </TableCell>
-                <TableCell className="text-center">{zone.estimated_days} দিন</TableCell>
+                <TableCell className="text-center">{zone.estimated_days} days</TableCell>
                 <TableCell className="text-center">
                   <Switch
                     checked={zone.is_active}
@@ -132,15 +132,15 @@ const AdminDeliveryZones = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>আপনি কি নিশ্চিত?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই ডেলিভারি জোন স্থায়ীভাবে মুছে ফেলা হবে।
+              This delivery zone will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

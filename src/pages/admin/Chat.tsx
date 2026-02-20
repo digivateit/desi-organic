@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { bn, enUS } from "date-fns/locale";
 
 const AdminChat = () => {
   const [sessions, setSessions] = useState<any[]>([]);
@@ -53,9 +53,9 @@ const AdminChat = () => {
     // Subscribe to new messages using session_id
     const channel = supabase
       .channel(`admin-chat-messages-${selectedSessionId}`)
-      .on("postgres_changes", { 
-        event: "INSERT", 
-        schema: "public", 
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
         table: "chat_messages",
         filter: `session_id=eq.${selectedSessionId}`
       }, (payload) => {
@@ -104,8 +104,8 @@ const AdminChat = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">লাইভ চ্যাট</h1>
-        <p className="text-muted-foreground">কাস্টমারদের সাথে রিয়েল-টাইম চ্যাট</p>
+        <h1 className="text-2xl font-bold text-foreground">Live Chat</h1>
+        <p className="text-muted-foreground">Real-time chat with customers</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
@@ -114,29 +114,28 @@ const AdminChat = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageCircle className="h-5 w-5" />
-              চ্যাট সেশন ({sessions.length})
+              Chat Sessions ({sessions.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[500px]">
               {sessions.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">কোনো চ্যাট নেই</p>
+                <p className="text-center text-muted-foreground py-8">No chats found</p>
               ) : (
                 sessions.map((session) => (
                   <div
                     key={session.id}
                     onClick={() => setSelectedSessionId(session.session_id)}
-                    className={`p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${
-                      selectedSessionId === session.session_id ? "bg-muted" : ""
-                    }`}
+                    className={`p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${selectedSessionId === session.session_id ? "bg-muted" : ""
+                      }`}
                   >
-                    <p className="font-medium">{session.customer_name || "অজানা"}</p>
+                    <p className="font-medium">{session.customer_name || "Unknown"}</p>
                     <p className="text-sm text-muted-foreground">
                       {session.customer_phone || session.session_id?.slice(0, 15) + "..."}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {session.last_message_at 
-                        ? format(new Date(session.last_message_at), "dd MMM, hh:mm a", { locale: bn })
+                      {session.last_message_at
+                        ? format(new Date(session.last_message_at), "dd MMM, hh:mm a", { locale: enUS })
                         : "—"
                       }
                     </p>
@@ -152,19 +151,19 @@ const AdminChat = () => {
           <CardHeader className="border-b">
             <CardTitle>
               {selectedSessionId
-                ? getSelectedSession()?.customer_name || "চ্যাট"
-                : "একটি চ্যাট সিলেক্ট করুন"}
+                ? getSelectedSession()?.customer_name || "Chat"
+                : "Select a Chat"}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col p-0">
             <ScrollArea className="flex-1 p-4">
               {!selectedSessionId ? (
                 <div className="h-full flex items-center justify-center text-muted-foreground">
-                  বাম দিক থেকে একটি চ্যাট সিলেক্ট করুন
+                  Select a chat from the left
                 </div>
               ) : messages.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-muted-foreground">
-                  কোনো মেসেজ নেই
+                  No messages yet
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -174,11 +173,10 @@ const AdminChat = () => {
                       className={`flex ${msg.sender_type === "admin" ? "justify-end" : "justify-start"}`}
                     >
                       <div
-                        className={`max-w-[70%] p-3 rounded-lg ${
-                          msg.sender_type === "admin"
+                        className={`max-w-[70%] p-3 rounded-lg ${msg.sender_type === "admin"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted"
-                        }`}
+                          }`}
                       >
                         <p>{msg.message}</p>
                         <p className="text-xs opacity-70 mt-1">
@@ -194,7 +192,7 @@ const AdminChat = () => {
             {selectedSessionId && (
               <div className="p-4 border-t flex gap-2">
                 <Input
-                  placeholder="মেসেজ লিখুন..."
+                  placeholder="Type a message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}

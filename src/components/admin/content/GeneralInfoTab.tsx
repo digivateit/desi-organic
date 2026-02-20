@@ -12,7 +12,7 @@ const GeneralInfoTab = () => {
   const { data: companyInfo, isLoading: companyLoading } = useHomepageSection("company_info");
   const { data: contactInfo, isLoading: contactLoading } = usePageContent("contact");
   const { data: siteSettings, isLoading: settingsLoading } = useSiteSettings();
-  
+
   const updateSection = useUpdateHomepageSection();
   const updatePageContent = useUpdatePageContent();
   const updateSettings = useUpdateSiteSettings();
@@ -68,7 +68,7 @@ const GeneralInfoTab = () => {
   };
 
   if (companyLoading || contactLoading || settingsLoading) {
-    return <div className="text-center py-8">লোড হচ্ছে...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   return (
@@ -76,30 +76,30 @@ const GeneralInfoTab = () => {
       {/* Company Info */}
       <Card>
         <CardHeader>
-          <CardTitle>কোম্পানি তথ্য</CardTitle>
+          <CardTitle>Company Info</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-2">
-            <Label>সংক্ষিপ্ত বিবরণ (ফুটারে দেখাবে)</Label>
+            <Label>Short Description (Footer)</Label>
             <Textarea
               value={company.short_description || ""}
               onChange={(e) => setCompany({ ...company, short_description: e.target.value })}
               rows={3}
-              placeholder="কোম্পানির সংক্ষিপ্ত বিবরণ..."
+              placeholder="Short company description..."
             />
           </div>
           <div className="grid gap-2">
-            <Label>বিস্তারিত (About পেইজে দেখাবে)</Label>
+            <Label>About Us (About Page)</Label>
             <Textarea
               value={company.about_us || ""}
               onChange={(e) => setCompany({ ...company, about_us: e.target.value })}
               rows={5}
-              placeholder="কোম্পানির বিস্তারিত তথ্য..."
+              placeholder="Detailed company info..."
             />
           </div>
           <Button onClick={saveCompany} className="gap-2">
             <Save className="h-4 w-4" />
-            সংরক্ষণ করুন
+            Save Changes
           </Button>
         </CardContent>
       </Card>
@@ -107,20 +107,20 @@ const GeneralInfoTab = () => {
       {/* Contact Info */}
       <Card>
         <CardHeader>
-          <CardTitle>যোগাযোগ তথ্য</CardTitle>
+          <CardTitle>Contact Info</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label>ফোন নম্বর</Label>
+              <Label>Phone Number</Label>
               <Input
                 value={contact.phone || ""}
                 onChange={(e) => setContact({ ...contact, phone: e.target.value })}
-                placeholder="০১৭০০-০০০০০০"
+                placeholder="01700-000000"
               />
             </div>
             <div className="grid gap-2">
-              <Label>ইমেইল</Label>
+              <Label>Email</Label>
               <Input
                 type="email"
                 value={contact.email || ""}
@@ -130,25 +130,25 @@ const GeneralInfoTab = () => {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label>ঠিকানা</Label>
+            <Label>Address</Label>
             <Textarea
               value={contact.address || ""}
               onChange={(e) => setContact({ ...contact, address: e.target.value })}
               rows={2}
-              placeholder="অফিসের ঠিকানা..."
+              placeholder="Office address..."
             />
           </div>
           <div className="grid gap-2">
-            <Label>হোয়াটসঅ্যাপ নম্বর</Label>
+            <Label>WhatsApp Number</Label>
             <Input
               value={contact.whatsapp || ""}
               onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })}
-              placeholder="০১৭০০-০০০০০০"
+              placeholder="01700-000000"
             />
           </div>
           <Button onClick={saveContact} className="gap-2">
             <Save className="h-4 w-4" />
-            সংরক্ষণ করুন
+            Save Changes
           </Button>
         </CardContent>
       </Card>
@@ -156,7 +156,7 @@ const GeneralInfoTab = () => {
       {/* Social Links */}
       <Card>
         <CardHeader>
-          <CardTitle>সোশ্যাল মিডিয়া লিংক</CardTitle>
+          <CardTitle>Social Media Links</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,13 +189,13 @@ const GeneralInfoTab = () => {
               <Input
                 value={social.whatsapp || ""}
                 onChange={(e) => setSocial({ ...social, whatsapp: e.target.value })}
-                placeholder="০১৭০০-০০০০০০"
+                placeholder="01700-000000"
               />
             </div>
           </div>
           <Button onClick={saveSocial} className="gap-2">
             <Save className="h-4 w-4" />
-            সংরক্ষণ করুন
+            Save Changes
           </Button>
         </CardContent>
       </Card>

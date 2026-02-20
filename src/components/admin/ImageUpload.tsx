@@ -20,13 +20,13 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast.error("শুধুমাত্র ছবি আপলোড করা যাবে");
+      toast.error("Only images can be uploaded");
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("ছবির সাইজ ৫MB এর বেশি হতে পারবে না");
+      toast.error("Image size cannot exceed 5MB");
       return;
     }
 
@@ -47,10 +47,10 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
         .getPublicUrl(fileName);
 
       onChange(publicUrl);
-      toast.success("ছবি আপলোড হয়েছে");
+      toast.success("Image uploaded successfully");
     } catch (error: any) {
       console.error("Upload error:", error);
-      toast.error("আপলোড করা যায়নি");
+      toast.error("Could not upload image");
     } finally {
       setUploading(false);
     }
@@ -100,7 +100,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
           ) : (
             <>
               <Upload className="h-6 w-6" />
-              <span className="text-xs">ছবি আপলোড</span>
+              <span className="text-xs">Upload Image</span>
             </>
           )}
         </Button>

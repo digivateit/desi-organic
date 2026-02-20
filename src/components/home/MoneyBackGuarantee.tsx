@@ -1,8 +1,10 @@
 import { Shield, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const MoneyBackGuarantee = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-10 md:py-14">
       <div className="container">
@@ -22,11 +24,10 @@ const MoneyBackGuarantee = () => {
             {/* Content */}
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                ১০০% মানি ব্যাক গ্যারান্টি
+                {t("guarantee.title")}
               </h2>
               <p className="text-lg opacity-90 mb-6 max-w-xl">
-                পণ্যের মানে সন্তুষ্ট না হলে আমরা আপনার সম্পূর্ণ টাকা ফেরত দেব। 
-                কোনো প্রশ্ন করা হবে না, কোনো ঝামেলা নেই।
+                {t("guarantee.description")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                 <Link to="/products">
@@ -34,7 +35,7 @@ const MoneyBackGuarantee = () => {
                     size="lg"
                     className="bg-white text-primary hover:bg-white/90 shadow-lg"
                   >
-                    এখনই কেনাকাটা করুন
+                    {t("guarantee.button_shop")}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
@@ -44,7 +45,7 @@ const MoneyBackGuarantee = () => {
                     variant="outline"
                     className="border-white/30 text-primary-foreground hover:bg-white/10 bg-transparent"
                   >
-                    রিটার্ন পলিসি দেখুন
+                    {t("guarantee.button_policy")}
                   </Button>
                 </Link>
               </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { CheckCircle, Package, Download, ArrowRight, Truck, MapPin, Phone, Calendar, CreditCard, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ interface OrderDetails {
 }
 
 const OrderConfirmation = () => {
+  const { t, i18n } = useTranslation();
   const { orderNumber } = useParams();
   const { downloadInvoice } = useInvoiceDownload();
   const { toast } = useToast();
@@ -80,26 +82,29 @@ const OrderConfirmation = () => {
     if (orderNumber) {
       navigator.clipboard.writeText(orderNumber);
       setCopied(true);
-      toast({ title: "কপি হয়েছে!", description: "অর্ডার নম্বর কপি করা হয়েছে" });
+      toast({
+        title: t("checkout.confirmation.copy_success"),
+        description: t("checkout.confirmation.copy_desc")
+      });
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   const paymentMethodLabels: Record<string, string> = {
-    cod: "ক্যাশ অন ডেলিভারি",
-    bkash: "বিকাশ",
-    nagad: "নগদ",
-    uddoktapay: "অনলাইন পেমেন্ট",
+    cod: t("checkout.cod"),
+    bkash: "bKash",
+    nagad: "Nagad",
+    uddoktapay: t("checkout.online_payment"),
   };
 
   const steps = [
-    { key: "pending", label: "অর্ডার গৃহীত", icon: CheckCircle },
-    { key: "confirmed", label: "নিশ্চিত", icon: CheckCircle },
-    { key: "processing", label: "প্রসেসিং", icon: Package },
-    { key: "shipped", label: "শিপড", icon: Truck },
-    { key: "delivered", label: "ডেলিভারি", icon: MapPin },
+    { key: "pending", label: t("checkout.confirmation.statuses.pending"), icon: CheckCircle },
+    { key: "confirmed", label: t("checkout.confirmation.statuses.confirmed"), icon: CheckCircle },
+    { key: "processing", label: t("checkout.confirmation.statuses.processing"), icon: Package },
+    { key: "shipped", label: t("checkout.confirmation.statuses.shipped"), icon: Truck },
+    { key: "delivered", label: t("checkout.confirmation.statuses.delivered"), icon: MapPin },
   ];
 
   const getStatusStep = (status: string): number => {
@@ -128,10 +133,10 @@ const OrderConfirmation = () => {
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              অর্ডার সফল হয়েছে! 🎉
+              {t("checkout.confirmation.success_title")}
             </h1>
             <p className="text-muted-foreground">
-              আপনার অর্ডার আমরা পেয়েছি এবং শীঘ্রই প্রসেস করা হবে।
+              {t("checkout.confirmation.success_desc")}
             </p>
           </div>
 
@@ -140,7 +145,7 @@ const OrderConfirmation = () => {
             <CardContent className="py-6">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-center sm:text-left">
-                  <p className="text-sm text-muted-foreground mb-1">অর্ডার নম্বর</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t("checkout.confirmation.order_number")}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl md:text-3xl font-bold text-primary font-mono">
                       {orderNumberWithHash}
@@ -151,19 +156,19 @@ const OrderConfirmation = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     className="gap-2"
                     onClick={() => orderNumber && downloadInvoice(orderNumber)}
                   >
                     <Download className="h-4 w-4" />
-                    ইনভয়েস
+                    {t("checkout.confirmation.invoice")}
                   </Button>
                   <Link to={`/track-order?order=${orderNumber}`}>
                     <Button size="sm" className="gap-2">
                       <Package className="h-4 w-4" />
-                      ট্র্যাক করুন
+                      {t("checkout.confirmation.track_order")}
                     </Button>
                   </Link>
                 </div>
@@ -174,15 +179,15 @@ const OrderConfirmation = () => {
           {/* Order Status Timeline */}
           <Card className="mb-6">
             <CardContent className="py-6">
-              <h3 className="font-semibold text-foreground mb-6 text-center">অর্ডার স্ট্যাটাস</h3>
+              <h3 className="font-semibold text-foreground mb-6 text-center">{t("checkout.confirmation.order_status")}</h3>
               <div className="flex items-center justify-between max-w-lg mx-auto relative">
                 {/* Progress Line */}
                 <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted" />
-                <div 
-                  className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-500" 
-                  style={{ width: progressWidth }} 
+                <div
+                  className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-500"
+                  style={{ width: progressWidth }}
                 />
-                
+
                 {steps.map((step, idx) => {
                   const isCompleted = idx <= currentStep;
                   const isCurrent = idx === currentStep;
@@ -190,11 +195,10 @@ const OrderConfirmation = () => {
                   return (
                     <div key={step.key} className="flex flex-col items-center relative z-10">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                          isCompleted
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isCompleted
                             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
                             : "bg-muted text-muted-foreground"
-                        } ${isCurrent ? "ring-2 ring-primary ring-offset-2" : ""}`}
+                          } ${isCurrent ? "ring-2 ring-primary ring-offset-2" : ""}`}
                       >
                         <Icon className="h-5 w-5" />
                       </div>
@@ -214,9 +218,9 @@ const OrderConfirmation = () => {
               <CardContent className="py-6">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                   <Package className="h-5 w-5 text-primary" />
-                  অর্ডারের পণ্য
+                  {t("checkout.confirmation.order_items")}
                 </h3>
-                
+
                 {loading ? (
                   <div className="space-y-3">
                     {[1, 2].map(i => (
@@ -244,22 +248,22 @@ const OrderConfirmation = () => {
 
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">সাবটোটাল</span>
+                        <span className="text-muted-foreground">{t("cart.subtotal")}</span>
                         <span>{formatPrice(order.subtotal)}</span>
                       </div>
                       {order.discount_amount && order.discount_amount > 0 && (
                         <div className="flex justify-between text-green-600">
-                          <span>ডিসকাউন্ট</span>
+                          <span>{t("checkout.coupon_discount")}</span>
                           <span>-{formatPrice(order.discount_amount)}</span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
+                        <span className="text-muted-foreground">{t("checkout.delivery_charge")}</span>
                         <span>{formatPrice(order.delivery_charge || 0)}</span>
                       </div>
                       <Separator />
                       <div className="flex justify-between font-bold text-lg pt-2">
-                        <span>মোট</span>
+                        <span>{t("cart.total")}</span>
                         <span className="text-primary">{formatPrice(order.total_amount)}</span>
                       </div>
                     </div>
@@ -277,9 +281,9 @@ const OrderConfirmation = () => {
                 <CardContent className="py-6">
                   <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-primary" />
-                    ডেলিভারি ঠিকানা
+                    {t("checkout.confirmation.delivery_address")}
                   </h3>
-                  
+
                   {loading ? (
                     <div className="space-y-2">
                       <div className="h-4 w-32 bg-muted animate-pulse rounded" />
@@ -312,31 +316,32 @@ const OrderConfirmation = () => {
                 <CardContent className="py-6">
                   <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                     <CreditCard className="h-5 w-5 text-primary" />
-                    পেমেন্ট তথ্য
+                    {t("checkout.confirmation.payment_info")}
                   </h3>
-                  
+
                   {loading ? (
                     <div className="h-4 w-32 bg-muted animate-pulse rounded" />
                   ) : order && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">পেমেন্ট মেথড</span>
+                        <span className="text-sm text-muted-foreground">{t("checkout.confirmation.payment_method")}</span>
                         <span className="font-medium">
                           {paymentMethodLabels[order.payment_method] || order.payment_method}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">পেমেন্ট স্ট্যাটাস</span>
+                        <span className="text-sm text-muted-foreground">{t("checkout.confirmation.payment_status")}</span>
                         <Badge variant={order.payment_status === "paid" ? "default" : "secondary"}>
-                          {order.payment_status === "paid" ? "পরিশোধিত" : 
-                           order.payment_status === "partial" ? "আংশিক পরিশোধিত" : "বকেয়া"}
+                          {t(`checkout.confirmation.payment_statuses.${order.payment_status}` as any)}
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">অর্ডারের তারিখ</span>
+                        <span className="text-sm text-muted-foreground">{t("checkout.confirmation.order_date")}</span>
                         <span className="flex items-center gap-1 text-sm">
                           <Calendar className="h-3 w-3" />
-                          {order && format(new Date(order.created_at), "dd MMMM, yyyy", { locale: bn })}
+                          {order && (i18n.language === "bn"
+                            ? format(new Date(order.created_at), "dd MMMM, yyyy", { locale: bn })
+                            : format(new Date(order.created_at), "dd MMMM, yyyy"))}
                         </span>
                       </div>
                     </div>
@@ -351,14 +356,14 @@ const OrderConfirmation = () => {
             <CardContent className="py-6">
               <div className="text-center space-y-4">
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p>📧 অর্ডারের আপডেট আপনার ফোনে SMS এর মাধ্যমে জানানো হবে।</p>
-                  <p>📞 যেকোনো সমস্যায় কল করুন: <strong>+880 1XXX-XXXXXX</strong></p>
+                  <p>📧 {t("checkout.confirmation.updates_info")}</p>
+                  <p>📞 {t("checkout.confirmation.contact_info")} <strong>+880 1XXX-XXXXXX</strong></p>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
                   <Link to="/shop">
                     <Button className="gap-2 w-full sm:w-auto">
-                      আরো কেনাকাটা করুন
+                      {t("checkout.confirmation.more_shopping")}
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>

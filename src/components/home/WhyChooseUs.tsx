@@ -1,31 +1,33 @@
 import { Check, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const WhyChooseUs = () => {
+  const { t } = useTranslation();
   const comparisons = [
     {
-      feature: "পণ্যের উৎস",
-      others: "অজানা/মিশ্রিত",
-      us: "সরাসরি কৃষকদের কাছ থেকে",
+      feature: t("why_us.source_topic"),
+      others: t("why_us.source_others"),
+      us: t("why_us.source_us"),
     },
     {
-      feature: "রাসায়নিক",
-      others: "ক্ষতিকর রাসায়নিক মিশ্রিত",
-      us: "সম্পূর্ণ রাসায়নিক মুক্ত",
+      feature: t("why_us.chem_topic"),
+      others: t("why_us.chem_others"),
+      us: t("why_us.chem_us"),
     },
     {
-      feature: "মান নিয়ন্ত্রণ",
-      others: "নেই বা দুর্বল",
-      us: "কঠোর মান নিয়ন্ত্রণ",
+      feature: t("why_us.quality_topic"),
+      others: t("why_us.quality_others"),
+      us: t("why_us.quality_us"),
     },
     {
-      feature: "দাম",
-      others: "মধ্যস্বত্বভোগীদের জন্য বেশি",
-      us: "সরাসরি ক্রয়ে সাশ্রয়ী",
+      feature: t("why_us.price_topic"),
+      others: t("why_us.price_others"),
+      us: t("why_us.price_us"),
     },
     {
-      feature: "স্বাস্থ্য সুরক্ষা",
-      others: "ঝুঁকিপূর্ণ",
-      us: "নিরাপদ ও স্বাস্থ্যকর",
+      feature: t("why_us.health_topic"),
+      others: t("why_us.health_others"),
+      us: t("why_us.health_us"),
     },
   ];
 
@@ -34,19 +36,19 @@ const WhyChooseUs = () => {
       <div className="container">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            অন্যরা vs আমরা
+            {t("why_us.title")}
           </h2>
           <p className="text-muted-foreground mt-2">
-            কেন অর্গানিক স্টোর থেকে কেনাকাটা করবেন?
+            {t("why_us.subtitle")}
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center font-semibold text-foreground">বিষয়</div>
-            <div className="text-center font-semibold text-destructive">অন্যান্য দোকান</div>
-            <div className="text-center font-semibold text-primary">আমরা</div>
+            <div className="text-center font-semibold text-foreground">{t("why_us.topic")}</div>
+            <div className="text-center font-semibold text-destructive">{t("why_us.others")}</div>
+            <div className="text-center font-semibold text-primary">{t("why_us.us")}</div>
           </div>
 
           {/* Comparison Rows */}

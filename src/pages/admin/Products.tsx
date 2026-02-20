@@ -83,19 +83,19 @@ const AdminProducts = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">পণ্য ম্যানেজমেন্ট</h1>
-          <p className="text-muted-foreground">সকল পণ্য দেখুন এবং পরিচালনা করুন ({products?.length || 0}টি)</p>
+          <h1 className="text-2xl font-bold text-foreground">Product Management</h1>
+          <p className="text-muted-foreground">View and manage all products ({products?.length || 0})</p>
         </div>
         <Button className="gap-2" onClick={() => { setEditProduct(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
-          নতুন পণ্য যোগ করুন
+          Add New Product
         </Button>
       </div>
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="পণ্য খুঁজুন..."
+          placeholder="Search products..."
           className="pl-10"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -106,13 +106,13 @@ const AdminProducts = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>পণ্য</TableHead>
-              <TableHead>ক্যাটাগরি</TableHead>
-              <TableHead className="text-right">দাম</TableHead>
-              <TableHead className="text-center">স্টক</TableHead>
-              <TableHead className="text-center">বিশেষ</TableHead>
-              <TableHead className="text-center">সক্রিয়</TableHead>
-              <TableHead className="text-right">অ্যাকশন</TableHead>
+              <TableHead>Product</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-center">Stock</TableHead>
+              <TableHead className="text-center">Featured</TableHead>
+              <TableHead className="text-center">Active</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,7 +133,7 @@ const AdminProducts = () => {
                         </div>
                       )}
                     </div>
-                    <span className="font-medium">{product.name_bn}</span>
+                    <span className="font-medium">{product.name || product.name_bn}</span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -176,11 +176,11 @@ const AdminProducts = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEdit(product)}>
                         <Edit className="h-4 w-4 mr-2" />
-                        এডিট করুন
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive" onClick={() => setDeleteId(product.id)}>
                         <Trash2 className="h-4 w-4 mr-2" />
-                        মুছে ফেলুন
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -200,15 +200,15 @@ const AdminProducts = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>আপনি কি নিশ্চিত?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই পণ্যটি স্থায়ীভাবে মুছে ফেলা হবে। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
+              This product will be permanently deleted. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

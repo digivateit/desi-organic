@@ -48,42 +48,42 @@ const AdminLayout = () => {
   const location = useLocation();
   const { user, isAdmin, signOut, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState<string[]>(["অর্ডার", "পণ্য"]);
+  const [openGroups, setOpenGroups] = useState<string[]>(["Orders", "Products"]);
 
   const menuStructure: MenuItemOrGroup[] = [
-    { icon: LayoutDashboard, label: "ড্যাশবোর্ড", href: "/admin" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
     {
       icon: ShoppingCart,
-      label: "অর্ডার",
+      label: "Orders",
       href: "/admin/orders",
       children: [
-        { icon: AlertCircle, label: "অসম্পূর্ণ অর্ডার", href: "/admin/incomplete-orders" },
-        { icon: TrendingUp, label: "রিকভারি অ্যানালিটিক্স", href: "/admin/recovery-analytics" },
-        { icon: CreditCard, label: "পেমেন্ট", href: "/admin/payments" },
-        { icon: Users, label: "কাস্টমার", href: "/admin/customers" },
+        { icon: AlertCircle, label: "Incomplete Orders", href: "/admin/incomplete-orders" },
+        { icon: TrendingUp, label: "Recovery Analytics", href: "/admin/recovery-analytics" },
+        { icon: CreditCard, label: "Payments", href: "/admin/payments" },
+        { icon: Users, label: "Customers", href: "/admin/customers" },
       ],
     },
     {
       icon: Package,
-      label: "পণ্য",
+      label: "Products",
       href: "/admin/products",
       children: [
-        { icon: PlusCircle, label: "নতুন পণ্য", href: "/admin/products/new" },
-        { icon: FolderTree, label: "ক্যাটাগরি", href: "/admin/categories" },
-        { icon: Tag, label: "কুপন", href: "/admin/coupons" },
-        { icon: Truck, label: "ডেলিভারি জোন", href: "/admin/delivery-zones" },
+        { icon: PlusCircle, label: "Add New Product", href: "/admin/products/new" },
+        { icon: FolderTree, label: "Categories", href: "/admin/categories" },
+        { icon: Tag, label: "Coupons", href: "/admin/coupons" },
+        { icon: Truck, label: "Delivery Zones", href: "/admin/delivery-zones" },
       ],
     },
-    { icon: MessageCircle, label: "লাইভ চ্যাট", href: "/admin/chat" },
-    { 
-      icon: FileText, 
-      label: "কন্টেন্ট", 
+    { icon: MessageCircle, label: "Live Chat", href: "/admin/chat" },
+    {
+      icon: FileText,
+      label: "Content",
       href: "/admin/content",
       children: [
-        { icon: Image, label: "ব্যানার", href: "/admin/banners" },
+        { icon: Image, label: "Banners", href: "/admin/banners" },
       ],
     },
-    { icon: Settings, label: "সেটিংস", href: "/admin/settings" },
+    { icon: Settings, label: "Settings", href: "/admin/settings" },
   ];
 
   const toggleGroup = (label: string) => {
@@ -96,7 +96,7 @@ const AdminLayout = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p>লোড হচ্ছে...</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -162,8 +162,8 @@ const AdminLayout = () => {
                   isActive(group.href)
                     ? "bg-primary text-primary-foreground"
                     : groupActive
-                    ? "text-primary"
-                    : "text-foreground hover:bg-muted"
+                      ? "text-primary"
+                      : "text-foreground hover:bg-muted"
                 )}
               >
                 <group.icon className="h-4 w-4" />
@@ -212,7 +212,7 @@ const AdminLayout = () => {
           </button>
           <Link to="/admin" className="flex items-center gap-2">
             <Leaf className="h-5 w-5 text-primary" />
-            <span className="font-bold text-primary">অ্যাডমিন</span>
+            <span className="font-bold text-primary">Admin</span>
           </Link>
           <div className="w-10" />
         </div>
@@ -229,9 +229,8 @@ const AdminLayout = () => {
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-card border-r border-border transform transition-transform lg:transform-none ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-          }`}
+          className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-card border-r border-border transform transition-transform lg:transform-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+            }`}
         >
           <div className="flex flex-col h-full">
             {/* Logo */}
@@ -242,8 +241,8 @@ const AdminLayout = () => {
                     <Leaf className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="font-bold text-primary">অ্যাডমিন প্যানেল</p>
-                    <p className="text-xs text-muted-foreground">অর্গানিক স্টোর</p>
+                    <p className="font-bold text-primary">Admin Panel</p>
+                    <p className="text-xs text-muted-foreground">Organic Store</p>
                   </div>
                 </Link>
                 <button
@@ -267,7 +266,7 @@ const AdminLayout = () => {
               <Link to="/">
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <ChevronRight className="h-4 w-4 rotate-180" />
-                  স্টোরে ফিরে যান
+                  Back to Store
                 </Button>
               </Link>
               <Button
@@ -279,7 +278,7 @@ const AdminLayout = () => {
                 }}
               >
                 <LogOut className="h-4 w-4" />
-                লগআউট
+                Logout
               </Button>
             </div>
           </div>

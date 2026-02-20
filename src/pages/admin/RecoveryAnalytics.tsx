@@ -26,7 +26,7 @@ import {
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays, startOfDay, endOfDay } from "date-fns";
-import { bn } from "date-fns/locale";
+import { bn, enUS } from "date-fns/locale";
 
 interface IncompleteOrder {
   id: string;
@@ -55,7 +55,7 @@ const RecoveryAnalytics = () => {
   const fetchData = async () => {
     setLoading(true);
     const startDate = subDays(new Date(), parseInt(dateRange));
-    
+
     const { data, error } = await supabase
       .from("incomplete_orders")
       .select("id, created_at, is_converted, cart_data, customer_phone")
@@ -78,11 +78,11 @@ const RecoveryAnalytics = () => {
   const pendingOrders = orders.filter(o => !o.is_converted).length;
   const ordersWithPhone = orders.filter(o => o.customer_phone).length;
   const conversionRate = totalOrders > 0 ? Math.round((convertedOrders / totalOrders) * 100) : 0;
-  
+
   const recoveredRevenue = orders
     .filter(o => o.is_converted)
     .reduce((sum, o) => sum + getCartTotal(o.cart_data), 0);
-  
+
   const potentialRevenue = orders
     .filter(o => !o.is_converted)
     .reduce((sum, o) => sum + getCartTotal(o.cart_data), 0);
@@ -95,16 +95,16 @@ const RecoveryAnalytics = () => {
     for (let i = days - 1; i >= 0; i--) {
       const date = subDays(new Date(), i);
       const dateStr = format(date, "yyyy-MM-dd");
-      
-      const dayOrders = orders.filter(o => 
+
+      const dayOrders = orders.filter(o =>
         format(new Date(o.created_at), "yyyy-MM-dd") === dateStr
       );
-      
+
       const total = dayOrders.length;
       const converted = dayOrders.filter(o => o.is_converted).length;
-      
+
       stats.push({
-        date: format(date, "dd MMM", { locale: bn }),
+        date: format(date, "dd MMM", { locale: enUS }),
         total,
         converted,
         conversionRate: total > 0 ? Math.round((converted / total) * 100) : 0,
@@ -116,15 +116,15 @@ const RecoveryAnalytics = () => {
 
   // Funnel data
   const funnelData = [
-    { name: "চেকআউট শুরু", value: totalOrders, fill: "hsl(var(--chart-1))" },
-    { name: "ফোন দিয়েছে", value: ordersWithPhone, fill: "hsl(var(--chart-2))" },
-    { name: "রূপান্তরিত", value: convertedOrders, fill: "hsl(var(--chart-3))" },
+    { name: "Checkout Started", value: totalOrders, fill: "hsl(var(--chart-1))" },
+    { name: "Phone Provided", value: ordersWithPhone, fill: "hsl(var(--chart-2))" },
+    { name: "Converted", value: convertedOrders, fill: "hsl(var(--chart-3))" },
   ];
 
   // Pie chart data
   const pieData = [
-    { name: "রূপান্তরিত", value: convertedOrders, fill: "hsl(var(--primary))" },
-    { name: "অসম্পূর্ণ", value: pendingOrders, fill: "hsl(var(--muted))" },
+    { name: "Converted", value: convertedOrders, fill: "hsl(var(--primary))" },
+    { name: "Incomplete", value: pendingOrders, fill: "hsl(var(--muted))" },
   ];
 
   // Top recovered amounts
@@ -133,12 +133,12 @@ const RecoveryAnalytics = () => {
     .sort((a, b) => getCartTotal(b.cart_data) - getCartTotal(a.cart_data))
     .slice(0, 5);
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString("en-US")}`;
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">লোড হচ্ছে...</p>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     );
   }
@@ -147,8 +147,8 @@ const RecoveryAnalytics = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">রিকভারি অ্যানালিটিক্স</h1>
-          <p className="text-muted-foreground">অসম্পূর্ণ অর্ডার রূপান্তর ও বিশ্লেষণ</p>
+          <h1 className="text-2xl font-bold text-foreground">Recovery Analytics</h1>
+          <p className="text-muted-foreground">Incomplete order conversion and analysis</p>
         </div>
         <Select value={dateRange} onValueChange={setDateRange}>
           <SelectTrigger className="w-40">
@@ -156,9 +156,9 @@ const RecoveryAnalytics = () => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="7">গত ৭ দিন</SelectItem>
-            <SelectItem value="30">গত ৩০ দিন</SelectItem>
-            <SelectItem value="90">গত ৯০ দিন</SelectItem>
+            <SelectItem value="7">Last 7 days</SelectItem>
+            <SelectItem value="30">Last 30 days</SelectItem>
+            <SelectItem value="90">Last 90 days</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -173,7 +173,7 @@ const RecoveryAnalytics = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalOrders}</p>
-                <p className="text-sm text-muted-foreground">মোট অসম্পূর্ণ</p>
+                <p className="text-sm text-muted-foreground">Total Incomplete</p>
               </div>
             </div>
           </CardContent>
@@ -186,7 +186,7 @@ const RecoveryAnalytics = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{convertedOrders}</p>
-                <p className="text-sm text-muted-foreground">রূপান্তরিত</p>
+                <p className="text-sm text-muted-foreground">Converted</p>
               </div>
             </div>
           </CardContent>
@@ -199,7 +199,7 @@ const RecoveryAnalytics = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{conversionRate}%</p>
-                <p className="text-sm text-muted-foreground">রূপান্তর হার</p>
+                <p className="text-sm text-muted-foreground">Conversion Rate</p>
               </div>
             </div>
           </CardContent>
@@ -212,7 +212,7 @@ const RecoveryAnalytics = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{formatPrice(recoveredRevenue)}</p>
-                <p className="text-sm text-muted-foreground">উদ্ধারকৃত বিক্রি</p>
+                <p className="text-sm text-muted-foreground">Recovered Revenue</p>
               </div>
             </div>
           </CardContent>
@@ -225,7 +225,7 @@ const RecoveryAnalytics = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 font-medium">উদ্ধারকৃত রাজস্ব</p>
+                <p className="text-sm text-green-600 font-medium">Recovered Revenue</p>
                 <p className="text-3xl font-bold text-green-700">{formatPrice(recoveredRevenue)}</p>
               </div>
               <TrendingUp className="h-10 w-10 text-green-500" />
@@ -236,7 +236,7 @@ const RecoveryAnalytics = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-600 font-medium">সম্ভাব্য রাজস্ব (অসম্পূর্ণ)</p>
+                <p className="text-sm text-orange-600 font-medium">Potential Revenue (Incomplete)</p>
                 <p className="text-3xl font-bold text-orange-700">{formatPrice(potentialRevenue)}</p>
               </div>
               <ShoppingCart className="h-10 w-10 text-orange-500" />
@@ -250,7 +250,7 @@ const RecoveryAnalytics = () => {
         {/* Daily Trend Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>দৈনিক রূপান্তর ট্রেন্ড</CardTitle>
+            <CardTitle>Daily Conversion Trend</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -259,16 +259,16 @@ const RecoveryAnalytics = () => {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="date" className="text-xs" />
                   <YAxis className="text-xs" />
-                  <Tooltip 
-                    contentStyle={{ 
+                  <Tooltip
+                    contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
                       borderRadius: "8px"
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="total" name="মোট" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="converted" name="রূপান্তরিত" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="total" name="Total" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="converted" name="Converted" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -278,7 +278,7 @@ const RecoveryAnalytics = () => {
         {/* Conversion Rate Trend */}
         <Card>
           <CardHeader>
-            <CardTitle>রূপান্তর হার ট্রেন্ড</CardTitle>
+            <CardTitle>Conversion Rate Trend</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -287,18 +287,18 @@ const RecoveryAnalytics = () => {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="date" className="text-xs" />
                   <YAxis className="text-xs" domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ 
+                  <Tooltip
+                    contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
                       borderRadius: "8px"
                     }}
-                    formatter={(value: number) => [`${value}%`, "রূপান্তর হার"]}
+                    formatter={(value: number) => [`${value}%`, "Conversion Rate"]}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="conversionRate" 
-                    stroke="hsl(var(--primary))" 
+                  <Line
+                    type="monotone"
+                    dataKey="conversionRate"
+                    stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     dot={{ fill: "hsl(var(--primary))" }}
                   />
@@ -314,7 +314,7 @@ const RecoveryAnalytics = () => {
         {/* Conversion Funnel */}
         <Card>
           <CardHeader>
-            <CardTitle>রূপান্তর ফানেল</CardTitle>
+            <CardTitle>Conversion Funnel</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -347,7 +347,7 @@ const RecoveryAnalytics = () => {
         {/* Pie Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>রূপান্তর অনুপাত</CardTitle>
+            <CardTitle>Conversion Ratio</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[200px]">
@@ -366,8 +366,8 @@ const RecoveryAnalytics = () => {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
+                  <Tooltip
+                    contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
                       borderRadius: "8px"
@@ -379,7 +379,7 @@ const RecoveryAnalytics = () => {
             <div className="flex justify-center gap-6 mt-4">
               {pieData.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
-                  <div 
+                  <div
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.fill }}
                   />
@@ -393,33 +393,32 @@ const RecoveryAnalytics = () => {
         {/* Top Recovered */}
         <Card>
           <CardHeader>
-            <CardTitle>সর্বোচ্চ উদ্ধারকৃত অর্ডার</CardTitle>
+            <CardTitle>Top Recovered Orders</CardTitle>
           </CardHeader>
           <CardContent>
             {topRecovered.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">কোনো রূপান্তরিত অর্ডার নেই</p>
+              <p className="text-muted-foreground text-center py-8">No converted orders found</p>
             ) : (
               <div className="space-y-3">
                 {topRecovered.map((order, idx) => (
-                  <div 
+                  <div
                     key={order.id}
                     className="flex items-center justify-between p-3 bg-muted rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        idx === 0 ? "bg-yellow-400 text-yellow-900" :
-                        idx === 1 ? "bg-gray-300 text-gray-700" :
-                        idx === 2 ? "bg-amber-600 text-white" :
-                        "bg-muted-foreground/20 text-muted-foreground"
-                      }`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${idx === 0 ? "bg-yellow-400 text-yellow-900" :
+                          idx === 1 ? "bg-gray-300 text-gray-700" :
+                            idx === 2 ? "bg-amber-600 text-white" :
+                              "bg-muted-foreground/20 text-muted-foreground"
+                        }`}>
                         {idx + 1}
                       </div>
                       <div>
                         <p className="text-sm font-medium">
-                          {order.customer_phone || "অজানা"}
+                          {order.customer_phone || "Unknown"}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(order.created_at), "dd MMM", { locale: bn })}
+                          {format(new Date(order.created_at), "dd MMM", { locale: enUS })}
                         </p>
                       </div>
                     </div>

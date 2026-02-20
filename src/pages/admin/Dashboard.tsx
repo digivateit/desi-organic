@@ -33,11 +33,11 @@ const AdminDashboard = () => {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      pending: "পেন্ডিং",
-      confirmed: "কনফার্মড",
-      shipped: "শিপড",
-      delivered: "ডেলিভার্ড",
-      cancelled: "বাতিল",
+      pending: "Pending",
+      confirmed: "Confirmed",
+      shipped: "Shipped",
+      delivered: "Delivered",
+      cancelled: "Cancelled",
     };
     return labels[status] || status;
   };
@@ -57,22 +57,22 @@ const AdminDashboard = () => {
 
   const statCards = [
     {
-      title: "আজকের অর্ডার",
+      title: "Today's Orders",
       value: stats?.todayOrders || 0,
       icon: ShoppingCart,
     },
     {
-      title: "মোট পণ্য",
+      title: "Total Products",
       value: stats?.totalProducts || 0,
       icon: Package,
     },
     {
-      title: "মোট কাস্টমার",
+      title: "Total Customers",
       value: stats?.totalCustomers || 0,
       icon: Users,
     },
     {
-      title: "আজকের বিক্রি",
+      title: "Today's Sales",
       value: `৳${(stats?.todaySales || 0).toLocaleString()}`,
       icon: TrendingUp,
     },
@@ -81,8 +81,8 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">ড্যাশবোর্ড</h1>
-        <p className="text-muted-foreground">স্বাগতম, অ্যাডমিন প্যানেলে</p>
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome to Admin Panel</p>
       </div>
 
       {/* Stats Grid */}
@@ -112,14 +112,14 @@ const AdminDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              সাম্প্রতিক অর্ডার
+              Recent Orders
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats?.recentOrders?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">
-                  কোনো অর্ডার নেই
+                  No orders found
                 </p>
               ) : (
                 stats?.recentOrders?.map((order: any) => (
@@ -158,14 +158,14 @@ const AdminDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-5 w-5" />
-              স্টক কম আছে
+              Low Stock Alert
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats?.lowStock?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">
-                  সব পণ্যের স্টক পর্যাপ্ত আছে
+                  All products have sufficient stock
                 </p>
               ) : (
                 stats?.lowStock?.map((product: any, index: number) => (
@@ -173,9 +173,9 @@ const AdminDashboard = () => {
                     key={index}
                     className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20"
                   >
-                    <p className="font-medium text-foreground">{product.name_bn}</p>
+                    <p className="font-medium text-foreground">{product.name || product.name_bn}</p>
                     <span className="text-sm font-bold text-destructive">
-                      {product.stock_quantity}টি বাকি
+                      {product.stock_quantity} remaining
                     </span>
                   </div>
                 ))
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <BarChart3 className="h-5 w-5" />
-          বিক্রি ও রূপান্তর বিশ্লেষণ
+          Sales & Conversion Analytics
         </h2>
         <SalesAnalyticsWidget />
       </div>
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
       {/* Quick Links */}
       <Card>
         <CardHeader>
-          <CardTitle>দ্রুত লিঙ্ক</CardTitle>
+          <CardTitle>Quick Links</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -206,28 +206,28 @@ const AdminDashboard = () => {
               className="p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center"
             >
               <ShoppingCart className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <span className="text-sm font-medium">অর্ডার</span>
+              <span className="text-sm font-medium">Orders</span>
             </Link>
             <Link
               to="/admin/products"
               className="p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center"
             >
               <Package className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <span className="text-sm font-medium">পণ্য</span>
+              <span className="text-sm font-medium">Products</span>
             </Link>
             <Link
               to="/admin/customers"
               className="p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center"
             >
               <Users className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <span className="text-sm font-medium">কাস্টমার</span>
+              <span className="text-sm font-medium">Customers</span>
             </Link>
             <Link
               to="/admin/chat"
               className="p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center"
             >
               <MessageCircle className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <span className="text-sm font-medium">চ্যাট</span>
+              <span className="text-sm font-medium">Chat</span>
             </Link>
           </div>
         </CardContent>

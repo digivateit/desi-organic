@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
 import { Leaf, Phone, Mail, MapPin, Facebook, Instagram, Youtube } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-card border-t border-border">
       {/* Main Footer */}
@@ -14,12 +15,12 @@ const Footer = () => {
                 <Leaf className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-primary">অর্গানিক স্টোর</h2>
-                <p className="text-[10px] text-muted-foreground">প্রকৃতির স্পর্শে স্বাস্থ্যকর জীবন</p>
+                <h2 className="text-lg font-bold text-primary">{t("header.store_name")}</h2>
+                <p className="text-[10px] text-muted-foreground">{t("header.store_tagline")}</p>
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              আমরা সরাসরি কৃষকদের কাছ থেকে সংগ্রহ করা ১০০% খাঁটি ও অর্গানিক পণ্য সরবরাহ করি। কোনো রাসায়নিক বা ভেজাল নেই।
+              {t("footer.about_description")}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
@@ -49,13 +50,13 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">দ্রুত লিংক</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t("footer.quick_links")}</h3>
             <ul className="space-y-2.5">
               {[
-                { name: "সকল পণ্য", href: "/shop" },
-                { name: "আমাদের সম্পর্কে", href: "/about" },
-                { name: "যোগাযোগ", href: "/contact" },
-                { name: "ব্লগ", href: "/blog" },
+                { name: t("nav.shop"), href: "/shop" },
+                { name: t("nav.about"), href: "/about" },
+                { name: t("nav.contact"), href: "/contact" },
+                { name: t("nav.blog") || "Blog", href: "/blog" },
                 { name: "FAQ", href: "/faq" },
               ].map((link) => (
                 <li key={link.href}>
@@ -72,14 +73,14 @@ const Footer = () => {
 
           {/* Customer Service */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">গ্রাহক সেবা</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t("footer.customer_service")}</h3>
             <ul className="space-y-2.5">
               {[
-                { name: "আমার অর্ডার", href: "/account" },
-                { name: "অর্ডার ট্র্যাকিং", href: "/track-order" },
-                { name: "রিটার্ন পলিসি", href: "/return-policy" },
-                { name: "শিপিং পলিসি", href: "/shipping-policy" },
-                { name: "টার্মস & কন্ডিশন", href: "/terms" },
+                { name: t("common.my_orders") || "My Orders", href: "/account" },
+                { name: t("nav.track_order"), href: "/track-order" },
+                { name: t("footer.return_policy") || "Return Policy", href: "/return-policy" },
+                { name: t("footer.shipping_policy") || "Shipping Policy", href: "/shipping-policy" },
+                { name: t("footer.terms") || "Terms & Conditions", href: "/terms" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -95,7 +96,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">যোগাযোগ</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t("footer.contact")}</h3>
             <ul className="space-y-3">
               <li>
                 <a
@@ -117,15 +118,15 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>ঢাকা, বাংলাদেশ</span>
+                <span>{t("footer.location")}</span>
               </li>
             </ul>
-            
+
             {/* Payment Methods */}
             <div className="mt-6">
-              <h4 className="text-sm font-medium text-foreground mb-2">পেমেন্ট পদ্ধতি</h4>
+              <h4 className="text-sm font-medium text-foreground mb-2">{t("footer.payment_methods")}</h4>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-2 py-1 bg-muted rounded">ক্যাশ অন ডেলিভারি</span>
+                <span className="px-2 py-1 bg-muted rounded">{t("footer.cod")}</span>
                 <span className="px-2 py-1 bg-muted rounded">bKash</span>
                 <span className="px-2 py-1 bg-muted rounded">Nagad</span>
               </div>
@@ -138,8 +139,8 @@ const Footer = () => {
       <div className="border-t border-border bg-muted/30">
         <div className="container py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} অর্গানিক স্টোর। সর্বস্বত্ব সংরক্ষিত।</p>
-            <p className="text-xs">ডেভলাপার - ইফতিকার রহমান</p>
+            <p>© {new Date().getFullYear()} {t("header.store_name")}. {t("footer.rights")}</p>
+            <p className="text-xs">{t("footer.developer")}</p>
           </div>
         </div>
       </div>

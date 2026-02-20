@@ -44,8 +44,8 @@ const AdminBanners = () => {
 
   const getPositionBadge = (position: string) => {
     const config: Record<string, string> = {
-      hero: "হিরো ব্যানার",
-      promo: "প্রমো ব্যানার",
+      hero: "Hero Banner",
+      promo: "Promo Banner",
     };
     return <Badge variant="secondary">{config[position] || position}</Badge>;
   };
@@ -67,12 +67,12 @@ const AdminBanners = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">ব্যানার</h1>
-          <p className="text-muted-foreground">হোমপেজ ব্যানার পরিচালনা করুন ({banners?.length || 0}টি)</p>
+          <h1 className="text-2xl font-bold text-foreground">Banners</h1>
+          <p className="text-muted-foreground">Manage homepage banners ({banners?.length || 0} total)</p>
         </div>
         <Button className="gap-2" onClick={() => { setEditBanner(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
-          নতুন ব্যানার
+          New Banner
         </Button>
       </div>
 
@@ -96,7 +96,7 @@ const AdminBanners = () => {
               )}
               {!banner.is_active && (
                 <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
-                  <span className="text-white font-bold">নিষ্ক্রিয়</span>
+                  <span className="text-white font-bold">Inactive</span>
                 </div>
               )}
             </div>
@@ -122,7 +122,7 @@ const AdminBanners = () => {
                     checked={banner.is_active}
                     onCheckedChange={(v) => handleToggle(banner.id, v)}
                   />
-                  <span className="text-sm text-muted-foreground">সক্রিয়</span>
+                  <span className="text-sm text-muted-foreground">Active</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(banner)}>
@@ -147,15 +147,15 @@ const AdminBanners = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>আপনি কি নিশ্চিত?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই ব্যানার স্থায়ীভাবে মুছে ফেলা হবে।
+              This banner will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

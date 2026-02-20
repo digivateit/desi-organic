@@ -1,4 +1,5 @@
 import { HelpCircle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +12,7 @@ import { useCart } from "@/contexts/CartContext";
 import { usePageContent } from "@/hooks/useCMSData";
 
 const FAQ = () => {
+  const { t, i18n } = useTranslation();
   const { getItemCount } = useCart();
   const { data: pageContent, isLoading } = usePageContent("faq");
 
@@ -27,16 +29,17 @@ const FAQ = () => {
               <HelpCircle className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {pageContent?.title_bn || "সাধারণ জিজ্ঞাসা"}
+              {i18n.language === "bn" ? (pageContent?.title_bn || "সাধারণ জিজ্ঞাসা") : (pageContent?.title || "General FAQ")}
             </h1>
             <p className="text-muted-foreground">
-              প্রায়শই জিজ্ঞাসিত প্রশ্ন ও উত্তর
+              {t("faq.subtitle")}
             </p>
           </div>
 
           {isLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="sr-only">{t("faq.loading")}</span>
             </div>
           ) : faqs.length > 0 ? (
             <div className="bg-card rounded-xl border border-border p-6">
@@ -44,10 +47,10 @@ const FAQ = () => {
                 {faqs.map((faq: any, index: number) => (
                   <AccordionItem key={index} value={`item-${index}`}>
                     <AccordionTrigger className="text-left">
-                      {faq.question}
+                      {i18n.language === "bn" ? faq.question_bn || faq.question : faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground">
-                      {faq.answer}
+                      {i18n.language === "bn" ? faq.answer_bn || faq.answer : faq.answer}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
@@ -55,16 +58,16 @@ const FAQ = () => {
             </div>
           ) : (
             <div className="bg-card rounded-xl border border-border p-6 text-center text-muted-foreground">
-              কোন প্রশ্ন নেই
+              {t("faq.no_faqs")}
             </div>
           )}
 
           <div className="mt-8 p-6 bg-muted/50 rounded-xl text-center">
             <p className="text-muted-foreground mb-4">
-              আপনার প্রশ্নের উত্তর পাননি?
+              {t("faq.not_found")}
             </p>
             <a href="/contact" className="text-primary hover:underline font-medium">
-              আমাদের সাথে যোগাযোগ করুন →
+              {t("faq.contact_us")}
             </a>
           </div>
         </div>

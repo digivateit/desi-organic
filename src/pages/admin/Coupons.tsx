@@ -25,7 +25,7 @@ import { useCoupons, useUpdateCoupon, useDeleteCoupon } from "@/hooks/useAdminDa
 import { CouponDialog } from "@/components/admin/dialogs/CouponDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { bn, enUS } from "date-fns/locale";
 
 const AdminCoupons = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -65,12 +65,12 @@ const AdminCoupons = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">কুপন</h1>
-          <p className="text-muted-foreground">ডিসকাউন্ট কুপন পরিচালনা করুন ({coupons?.length || 0}টি)</p>
+          <h1 className="text-2xl font-bold text-foreground">Coupons</h1>
+          <p className="text-muted-foreground">Manage discount coupons ({coupons?.length || 0} total)</p>
         </div>
         <Button className="gap-2" onClick={() => { setEditCoupon(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
-          নতুন কুপন
+          New Coupon
         </Button>
       </div>
 
@@ -78,13 +78,13 @@ const AdminCoupons = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>কোড</TableHead>
-              <TableHead>ছাড়</TableHead>
-              <TableHead className="text-center">মিনিমাম অর্ডার</TableHead>
-              <TableHead className="text-center">ব্যবহার</TableHead>
-              <TableHead>মেয়াদ</TableHead>
-              <TableHead className="text-center">সক্রিয়</TableHead>
-              <TableHead className="text-right">অ্যাকশন</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Discount</TableHead>
+              <TableHead className="text-center">Min Order</TableHead>
+              <TableHead className="text-center">Usage</TableHead>
+              <TableHead>Expiry</TableHead>
+              <TableHead className="text-center">Active</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,8 +114,8 @@ const AdminCoupons = () => {
                 </TableCell>
                 <TableCell className="text-sm">
                   {coupon.valid_until
-                    ? format(new Date(coupon.valid_until), "dd MMM, yyyy", { locale: bn })
-                    : "সীমাহীন"}
+                    ? format(new Date(coupon.valid_until), "dd MMM, yyyy", { locale: enUS })
+                    : "Unlimited"}
                 </TableCell>
                 <TableCell className="text-center">
                   <Switch
@@ -148,15 +148,15 @@ const AdminCoupons = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>আপনি কি নিশ্চিত?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই কুপন স্থায়ীভাবে মুছে ফেলা হবে।
+              This coupon will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

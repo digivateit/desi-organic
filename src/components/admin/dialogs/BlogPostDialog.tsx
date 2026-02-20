@@ -23,8 +23,8 @@ import { Switch } from "@/components/ui/switch";
 import { useCreateBlogPost, useUpdateBlogPost } from "@/hooks/useCMSData";
 
 const formSchema = z.object({
-  title: z.string().min(1, "শিরোনাম আবশ্যক"),
-  slug: z.string().min(1, "স্লাগ আবশ্যক"),
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
   excerpt: z.string().optional(),
   content: z.string().optional(),
   image_url: z.string().optional(),
@@ -54,7 +54,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
       excerpt: "",
       content: "",
       image_url: "",
-      author: "অর্গানিক স্টোর",
+      author: "Organic Store",
       category: "",
       is_published: false,
     },
@@ -68,7 +68,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
         excerpt: post.excerpt || "",
         content: post.content || "",
         image_url: post.image_url || "",
-        author: post.author || "অর্গানিক স্টোর",
+        author: post.author || "Organic Store",
         category: post.category || "",
         is_published: post.is_published || false,
       });
@@ -79,7 +79,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
         excerpt: "",
         content: "",
         image_url: "",
-        author: "অর্গানিক স্টোর",
+        author: "Organic Store",
         category: "",
         is_published: false,
       });
@@ -110,7 +110,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "ব্লগ পোস্ট সম্পাদনা" : "নতুন ব্লগ পোস্ট"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Edit Blog Post" : "New Blog Post"}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -120,7 +120,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>শিরোনাম *</FormLabel>
+                  <FormLabel>Title *</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -142,7 +142,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>স্লাগ (URL) *</FormLabel>
+                  <FormLabel>Slug (URL) *</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -157,7 +157,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
                 name="author"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>লেখক</FormLabel>
+                    <FormLabel>Author</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -171,9 +171,9 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ক্যাটাগরি</FormLabel>
+                    <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="যেমন: স্বাস্থ্য, রেসিপি" />
+                      <Input {...field} placeholder="e.g. Health, Recipe" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,7 +186,7 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               name="image_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ছবির URL</FormLabel>
+                  <FormLabel>Image URL</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="https://..." />
                   </FormControl>
@@ -200,9 +200,9 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               name="excerpt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>সংক্ষিপ্ত বিবরণ</FormLabel>
+                  <FormLabel>Excerpt</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={2} placeholder="ব্লগ পোস্টের সংক্ষিপ্ত বিবরণ..." />
+                    <Textarea {...field} rows={2} placeholder="A short description of the post..." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -214,9 +214,9 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>বিস্তারিত</FormLabel>
+                  <FormLabel>Content</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={10} placeholder="পুরো ব্লগ পোস্ট লিখুন..." />
+                    <Textarea {...field} rows={10} placeholder="Write the full blog post..." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,9 +229,9 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">প্রকাশ করুন</FormLabel>
+                    <FormLabel className="text-base">Publish</FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      এটি সক্রিয় করলে পোস্ট সবার জন্য দৃশ্যমান হবে
+                      Visible to everyone when published
                     </p>
                   </div>
                   <FormControl>
@@ -243,10 +243,10 @@ const BlogPostDialog = ({ open, onOpenChange, post }: BlogPostDialogProps) => {
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                বাতিল
+                Cancel
               </Button>
               <Button type="submit" disabled={createPost.isPending || updatePost.isPending}>
-                {isEditing ? "আপডেট করুন" : "যোগ করুন"}
+                {isEditing ? "Update Post" : "Add Post"}
               </Button>
             </div>
           </form>

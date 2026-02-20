@@ -1,12 +1,14 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategorySlider = () => {
+  const { t, i18n } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { data: categories = [], isLoading } = useQuery({
@@ -17,7 +19,7 @@ const CategorySlider = () => {
         .select('*')
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
-      
+
       if (error) throw error;
       return data;
     },
@@ -66,7 +68,7 @@ const CategorySlider = () => {
       <div className="container">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">
-            ক্যাটাগরি
+            {t("products.categories_title")}
           </h2>
           <div className="flex items-center gap-2">
             <Button
@@ -104,7 +106,7 @@ const CategorySlider = () => {
                   {category.image_url ? (
                     <img
                       src={category.image_url}
-                      alt={category.name_bn}
+                      alt={i18n.language === "bn" ? category.name_bn : (category.name || category.name_bn)}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
@@ -114,7 +116,7 @@ const CategorySlider = () => {
                   )}
                 </div>
                 <span className="text-sm font-medium text-center text-foreground group-hover:text-primary transition-colors">
-                  {category.name_bn}
+                  {i18n.language === "bn" ? category.name_bn : (category.name || category.name_bn)}
                 </span>
               </div>
             </Link>

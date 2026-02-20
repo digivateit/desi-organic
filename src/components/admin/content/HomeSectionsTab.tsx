@@ -25,7 +25,7 @@ const HomeSectionsTab = () => {
   const { data: testimonials, isLoading: testimonialsLoading } = useTestimonials();
   const updateSection = useUpdateHomepageSection();
   const deleteTestimonial = useDeleteTestimonial();
-  
+
   const [editedSections, setEditedSections] = useState<Record<string, any>>({});
   const [testimonialDialog, setTestimonialDialog] = useState(false);
   const [editTestimonial, setEditTestimonial] = useState<any>(null);
@@ -49,7 +49,7 @@ const HomeSectionsTab = () => {
   };
 
   if (sectionsLoading || testimonialsLoading) {
-    return <div className="text-center py-8">লোড হচ্ছে...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   const whyChooseUs = getSection("why_choose_us");
@@ -62,7 +62,7 @@ const HomeSectionsTab = () => {
         {/* Customer Reviews */}
         <AccordionItem value="reviews" className="border rounded-lg">
           <AccordionTrigger className="px-4 hover:no-underline">
-            <span className="font-medium">কাস্টমার রিভিউ ({testimonials?.length || 0})</span>
+            <span className="font-medium">Customer Reviews ({testimonials?.length || 0})</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <div className="space-y-4">
@@ -78,7 +78,7 @@ const HomeSectionsTab = () => {
                           </div>
                           <p className="text-sm text-muted-foreground mt-1">{t.comment}</p>
                           {t.product_name && (
-                            <p className="text-xs text-muted-foreground mt-1">পণ্য: {t.product_name}</p>
+                            <p className="text-xs text-muted-foreground mt-1">Product: {t.product_name}</p>
                           )}
                         </div>
                         <div className="flex gap-2">
@@ -109,7 +109,7 @@ const HomeSectionsTab = () => {
                 className="gap-2"
               >
                 <Plus className="h-4 w-4" />
-                নতুন রিভিউ যোগ করুন
+                Add New Review
               </Button>
             </div>
           </AccordionContent>
@@ -118,24 +118,24 @@ const HomeSectionsTab = () => {
         {/* Why Choose Us / Others vs Us */}
         <AccordionItem value="comparison" className="border rounded-lg">
           <AccordionTrigger className="px-4 hover:no-underline">
-            <span className="font-medium">অন্যরা বনাম আমরা</span>
+            <span className="font-medium">Others vs Us</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <div className="space-y-4">
               <div className="grid gap-2">
-                <Label>শিরোনাম</Label>
+                <Label>Title</Label>
                 <Input
                   value={whyChooseUs?.title_bn || ""}
                   onChange={(e) => setSection("why_choose_us", { title_bn: e.target.value })}
                 />
               </div>
               <div className="space-y-3">
-                <Label>তুলনা তালিকা</Label>
+                <Label>Comparison List</Label>
                 {(whyChooseUs?.content || []).map((item: any, idx: number) => (
                   <Card key={idx}>
                     <CardContent className="p-3 grid grid-cols-3 gap-2">
                       <Input
-                        placeholder="বিষয়"
+                        placeholder="Feature"
                         value={item.feature || ""}
                         onChange={(e) => {
                           const content = [...(whyChooseUs?.content || [])];
@@ -144,7 +144,7 @@ const HomeSectionsTab = () => {
                         }}
                       />
                       <Input
-                        placeholder="অন্যরা"
+                        placeholder="Others"
                         value={item.others || ""}
                         onChange={(e) => {
                           const content = [...(whyChooseUs?.content || [])];
@@ -154,7 +154,7 @@ const HomeSectionsTab = () => {
                       />
                       <div className="flex gap-2">
                         <Input
-                          placeholder="আমরা"
+                          placeholder="Us"
                           value={item.us || ""}
                           onChange={(e) => {
                             const content = [...(whyChooseUs?.content || [])];
@@ -189,11 +189,11 @@ const HomeSectionsTab = () => {
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  সারি যোগ করুন
+                  Add Row
                 </Button>
                 <Button onClick={() => saveSection("why_choose_us")} className="gap-2">
                   <Save className="h-4 w-4" />
-                  সংরক্ষণ
+                  Save
                 </Button>
               </div>
             </div>
@@ -203,50 +203,50 @@ const HomeSectionsTab = () => {
         {/* Money Back Guarantee */}
         <AccordionItem value="moneyback" className="border rounded-lg">
           <AccordionTrigger className="px-4 hover:no-underline">
-            <span className="font-medium">মানি ব্যাক গ্যারান্টি</span>
+            <span className="font-medium">Money Back Guarantee</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <div className="space-y-4">
               <div className="grid gap-2">
-                <Label>শিরোনাম</Label>
+                <Label>Title</Label>
                 <Input
                   value={moneyBack?.title_bn || ""}
                   onChange={(e) => setSection("money_back_guarantee", { title_bn: e.target.value })}
                 />
               </div>
               <div className="grid gap-2">
-                <Label>বিবরণ</Label>
+                <Label>Description</Label>
                 <Textarea
                   value={(moneyBack?.content as any)?.description || ""}
-                  onChange={(e) => setSection("money_back_guarantee", { 
-                    content: { ...(moneyBack?.content || {}), description: e.target.value } 
+                  onChange={(e) => setSection("money_back_guarantee", {
+                    content: { ...(moneyBack?.content || {}), description: e.target.value }
                   })}
                   rows={3}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label>বাটন টেক্সট</Label>
+                  <Label>Button Text</Label>
                   <Input
                     value={(moneyBack?.content as any)?.cta_text || ""}
-                    onChange={(e) => setSection("money_back_guarantee", { 
-                      content: { ...(moneyBack?.content || {}), cta_text: e.target.value } 
+                    onChange={(e) => setSection("money_back_guarantee", {
+                      content: { ...(moneyBack?.content || {}), cta_text: e.target.value }
                     })}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>বাটন লিংক</Label>
+                  <Label>Button Link</Label>
                   <Input
                     value={(moneyBack?.content as any)?.cta_link || ""}
-                    onChange={(e) => setSection("money_back_guarantee", { 
-                      content: { ...(moneyBack?.content || {}), cta_link: e.target.value } 
+                    onChange={(e) => setSection("money_back_guarantee", {
+                      content: { ...(moneyBack?.content || {}), cta_link: e.target.value }
                     })}
                   />
                 </div>
               </div>
               <Button onClick={() => saveSection("money_back_guarantee")} className="gap-2">
                 <Save className="h-4 w-4" />
-                সংরক্ষণ
+                Save
               </Button>
             </div>
           </AccordionContent>
@@ -255,32 +255,32 @@ const HomeSectionsTab = () => {
         {/* Order Confirmation */}
         <AccordionItem value="orderconfirm" className="border rounded-lg">
           <AccordionTrigger className="px-4 hover:no-underline">
-            <span className="font-medium">অর্ডার কনফার্মেশন নোট</span>
+            <span className="font-medium">Order Confirmation Note</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <div className="space-y-4">
               <div className="grid gap-2">
-                <Label>ধন্যবাদ মেসেজ</Label>
+                <Label>Thank You Message</Label>
                 <Input
                   value={(orderConfirm?.content as any)?.thank_you_message || ""}
-                  onChange={(e) => setSection("order_confirmation", { 
-                    content: { ...(orderConfirm?.content || {}), thank_you_message: e.target.value } 
+                  onChange={(e) => setSection("order_confirmation", {
+                    content: { ...(orderConfirm?.content || {}), thank_you_message: e.target.value }
                   })}
                 />
               </div>
               <div className="grid gap-2">
-                <Label>নোট</Label>
+                <Label>Note</Label>
                 <Textarea
                   value={(orderConfirm?.content as any)?.note || ""}
-                  onChange={(e) => setSection("order_confirmation", { 
-                    content: { ...(orderConfirm?.content || {}), note: e.target.value } 
+                  onChange={(e) => setSection("order_confirmation", {
+                    content: { ...(orderConfirm?.content || {}), note: e.target.value }
                   })}
                   rows={3}
                 />
               </div>
               <Button onClick={() => saveSection("order_confirmation")} className="gap-2">
                 <Save className="h-4 w-4" />
-                সংরক্ষণ
+                Save
               </Button>
             </div>
           </AccordionContent>
@@ -296,13 +296,13 @@ const HomeSectionsTab = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>রিভিউ মুছে ফেলবেন?</AlertDialogTitle>
+            <AlertDialogTitle>Delete review?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
@@ -310,7 +310,7 @@ const HomeSectionsTab = () => {
                 setDeleteId(null);
               }}
             >
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

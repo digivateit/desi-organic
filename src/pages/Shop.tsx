@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useSearchParams, useParams } from "react-router-dom";
 import { Filter, Grid3X3, List, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import ProductCard from "@/components/home/ProductCard";
 
 interface Category {
   id: string;
+  name?: string;
   name_bn: string;
   slug: string;
   image_url: string | null;
@@ -21,6 +23,7 @@ interface Category {
 
 interface Product {
   id: string;
+  name?: string;
   name_bn: string;
   slug: string;
   images: string[] | null;
@@ -32,6 +35,7 @@ interface Product {
 }
 
 const Shop = () => {
+  const { t, i18n } = useTranslation();
   const { getItemCount } = useCart();
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,8 +65,8 @@ const Shop = () => {
     setLoading(true);
     try {
       const [categoriesRes, productsRes] = await Promise.all([
-        supabase.from("categories").select("id, name_bn, slug, image_url").eq("is_active", true).order("sort_order"),
-        supabase.from("products").select("id, name_bn, slug, images, base_price, sale_price, is_featured, category_id, stock_quantity").eq("is_active", true),
+        supabase.from("categories").select("id, name, name_bn, slug, image_url").eq("is_active", true).order("sort_order"),
+        supabase.from("products").select("id, name, name_bn, slug, images, base_price, sale_price, is_featured, category_id, stock_quantity").eq("is_active", true),
       ]);
 
       if (categoriesRes.data) setCategories(categoriesRes.data);
@@ -85,10 +89,11 @@ const Shop = () => {
   const filteredProducts = products
     .filter((product) => {
       // Search filter
-      const matchesSearch = searchQuery.trim() === "" || 
-        product.name_bn.toLowerCase().includes(searchQuery.toLowerCase());
+      const productName = i18n.language === "bn" ? product.name_bn : (product.name || product.name_bn);
+      const matchesSearch = searchQuery.trim() === "" ||
+        productName.toLowerCase().includes(searchQuery.toLowerCase());
       // Category filter
-      const matchesCategory = selectedCategories.length === 0 || 
+      const matchesCategory = selectedCategories.length === 0 ||
         (product.category_id && selectedCategories.includes(product.category_id));
       return matchesSearch && matchesCategory;
     })
@@ -108,7 +113,7 @@ const Shop = () => {
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="font-semibold text-foreground mb-4">ক্যাটাগরি</h3>
+        <h3 className="font-semibold text-foreground mb-4">{t("products.categories_title")}</h3>
         <div className="space-y-3">
           {categories.map((category) => (
             <label
@@ -120,7 +125,7 @@ const Shop = () => {
                 onCheckedChange={() => toggleCategory(category.id)}
               />
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                {category.name_bn}
+                {i18n.language === "bn" ? category.name_bn : (category.name || category.name_bn)}
               </span>
             </label>
           ))}
@@ -134,7 +139,7 @@ const Shop = () => {
           onClick={() => setSelectedCategories([])}
           className="w-full"
         >
-          ফিল্টার রিসেট করুন
+          {t("shop.reset_filter")}
         </Button>
       )}
     </div>
@@ -149,18 +154,18 @@ const Shop = () => {
           {/* Header & Search */}
           <div className="mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              সকল পণ্য
+              {t("shop.all_products")}
             </h1>
             <p className="text-muted-foreground mb-4">
-              আমাদের সংগ্রহ থেকে আপনার পছন্দের পণ্য বেছে নিন
+              {t("shop.shop_desc")}
             </p>
-            
+
             {/* Search Input */}
             <div className="relative max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="পণ্য খুঁজুন..."
+                placeholder={t("header.search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-10 bg-card"
@@ -176,7 +181,7 @@ const Shop = () => {
             </div>
             {searchQuery && (
               <p className="text-sm text-muted-foreground mt-2">
-                "{searchQuery}" এর জন্য {filteredProducts.length}টি ফলাফল
+                "{searchQuery}" {t("shop.results_for")} {filteredProducts.length}{t("shop.items_count")}
               </p>
             )}
           </div>
@@ -189,7 +194,7 @@ const Shop = () => {
               onClick={() => setSelectedCategories([])}
               className="rounded-full"
             >
-              সব
+              {t("shop.all")}
             </Button>
             {categories.map((category) => (
               <Button
@@ -199,7 +204,7 @@ const Shop = () => {
                 onClick={() => toggleCategory(category.id)}
                 className="rounded-full"
               >
-                {category.name_bn}
+                {i18n.language === "bn" ? category.name_bn : (category.name || category.name_bn)}
               </Button>
             ))}
           </div>
@@ -222,12 +227,12 @@ const Shop = () => {
                     <SheetTrigger asChild>
                       <Button variant="outline" size="sm" className="lg:hidden">
                         <Filter className="h-4 w-4 mr-2" />
-                        ফিল্টার
+                        {t("shop.filter")}
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="left">
                       <SheetHeader>
-                        <SheetTitle>ফিল্টার</SheetTitle>
+                        <SheetTitle>{t("shop.filter")}</SheetTitle>
                       </SheetHeader>
                       <div className="mt-6">
                         <FilterSidebar />
@@ -236,7 +241,7 @@ const Shop = () => {
                   </Sheet>
 
                   <span className="text-sm text-muted-foreground hidden sm:inline">
-                    {filteredProducts.length}টি পণ্য
+                    {filteredProducts.length}{t("shop.items_count")}
                   </span>
                 </div>
 
@@ -244,13 +249,13 @@ const Shop = () => {
                   {/* Sort */}
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-[160px]">
-                      <SelectValue placeholder="সাজান" />
+                      <SelectValue placeholder={t("shop.sort")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="newest">নতুন</SelectItem>
-                      <SelectItem value="featured">বিশেষ</SelectItem>
-                      <SelectItem value="price-low">দাম: কম থেকে বেশি</SelectItem>
-                      <SelectItem value="price-high">দাম: বেশি থেকে কম</SelectItem>
+                      <SelectItem value="newest">{t("shop.newest")}</SelectItem>
+                      <SelectItem value="featured">{t("shop.featured")}</SelectItem>
+                      <SelectItem value="price-low">{t("shop.price_low_high")}</SelectItem>
+                      <SelectItem value="price-high">{t("shop.price_high_low")}</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -281,7 +286,7 @@ const Shop = () => {
                 </div>
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">কোনো পণ্য পাওয়া যায়নি</p>
+                  <p className="text-muted-foreground">{t("shop.no_products")}</p>
                 </div>
               ) : (
                 <div
@@ -295,6 +300,7 @@ const Shop = () => {
                     <ProductCard
                       key={product.id}
                       id={product.id}
+                      name={product.name}
                       name_bn={product.name_bn}
                       slug={product.slug}
                       image_url={product.images?.[0] || "/placeholder.svg"}

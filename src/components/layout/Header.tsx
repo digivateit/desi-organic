@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, Phone, Leaf, PackageSearch } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, Phone, Leaf, PackageSearch, Languages } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,6 +18,7 @@ interface HeaderProps {
 }
 
 const Header = ({ cartCount = 0 }: HeaderProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,11 +33,11 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
   };
 
   const navLinks = [
-    { name: "হোম", href: "/" },
-    { name: "সকল পণ্য", href: "/shop" },
-    { name: "আমাদের সম্পর্কে", href: "/about" },
-    { name: "যোগাযোগ", href: "/contact" },
-    { name: "অর্ডার ট্র্যাক", href: "/track-order", icon: PackageSearch },
+    { name: t("nav.home"), href: "/" },
+    { name: t("nav.shop"), href: "/shop" },
+    { name: t("nav.about"), href: "/about" },
+    { name: t("nav.contact"), href: "/contact" },
+    { name: t("nav.track_order"), href: "/track-order", icon: PackageSearch },
   ];
 
   return (
@@ -48,7 +51,7 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
               <span>+880 1XXX-XXXXXX</span>
             </a>
           </div>
-          <p className="text-xs">প্রতিদিন সকাল ৯টা - রাত ১০টা</p>
+          <p className="text-xs">{t("header.working_hours")}</p>
         </div>
       </div>
 
@@ -66,7 +69,7 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-primary">
                   <Leaf className="h-5 w-5" />
-                  অর্গানিক স্টোর
+                  {t("header.store_name")}
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-2">
@@ -89,8 +92,8 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
               <Leaf className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-primary leading-tight">অর্গানিক স্টোর</h1>
-              <p className="text-[10px] text-muted-foreground -mt-0.5">প্রকৃতির স্পর্শে স্বাস্থ্যকর জীবন</p>
+              <h1 className="text-lg font-bold text-primary leading-tight">{t("header.store_name")}</h1>
+              <p className="text-[10px] text-muted-foreground -mt-0.5">{t("header.store_tagline")}</p>
             </div>
           </Link>
 
@@ -113,8 +116,8 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
             <form onSubmit={handleSearch} className="hidden lg:flex items-center relative">
               <Input
                 type="search"
-                placeholder="পণ্য খুঁজুন..."
-                className="w-64 pr-10 bg-muted/50 border-border"
+                placeholder={t("header.search_placeholder")}
+                className="w-48 xl:w-64 pr-10 bg-muted/50 border-border"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -145,12 +148,7 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
               </Button>
             </Link>
 
-            {/* Account */}
-            <Link to="/account">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
+            <LanguageSwitcher />
           </div>
         </div>
 
@@ -160,7 +158,7 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
             <div className="relative">
               <Input
                 type="search"
-                placeholder="পণ্য খুঁজুন..."
+                placeholder={t("header.search_placeholder")}
                 className="w-full pr-10 bg-muted/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -173,7 +171,7 @@ const Header = ({ cartCount = 0 }: HeaderProps) => {
           </form>
         )}
       </div>
-    </header>
+    </header >
   );
 };
 

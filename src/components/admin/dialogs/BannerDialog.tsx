@@ -89,16 +89,16 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
       if (banner) {
         const { error } = await supabase.from("banners").update(data).eq("id", banner.id);
         if (error) throw error;
-        toast.success("ব্যানার আপডেট হয়েছে");
+        toast.success("Banner updated");
       } else {
         const { error } = await supabase.from("banners").insert(data);
         if (error) throw error;
-        toast.success("ব্যানার যোগ হয়েছে");
+        toast.success("Banner added");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-banners"] });
       onOpenChange(false);
     } catch (error) {
-      toast.error("কিছু সমস্যা হয়েছে");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -108,19 +108,19 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{banner ? "ব্যানার এডিট করুন" : "নতুন ব্যানার"}</DialogTitle>
+          <DialogTitle>{banner ? "Edit Banner" : "New Banner"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>টাইটেল (English)</Label>
+              <Label>Title (English)</Label>
               <Input
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>টাইটেল (বাংলা)</Label>
+              <Label>Title (Bengali)</Label>
               <Input
                 value={form.title_bn}
                 onChange={(e) => setForm({ ...form, title_bn: e.target.value })}
@@ -129,14 +129,14 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>সাবটাইটেল (English)</Label>
+              <Label>Subtitle (English)</Label>
               <Input
                 value={form.subtitle}
                 onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>সাবটাইটেল (বাংলা)</Label>
+              <Label>Subtitle (Bengali)</Label>
               <Input
                 value={form.subtitle_bn}
                 onChange={(e) => setForm({ ...form, subtitle_bn: e.target.value })}
@@ -144,7 +144,7 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
             </div>
           </div>
           <div className="space-y-2">
-            <Label>ছবির URL *</Label>
+            <Label>Image URL *</Label>
             <Input
               value={form.image_url}
               onChange={(e) => setForm({ ...form, image_url: e.target.value })}
@@ -152,7 +152,7 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
             />
           </div>
           <div className="space-y-2">
-            <Label>লিংক URL</Label>
+            <Label>Link URL</Label>
             <Input
               value={form.link_url}
               onChange={(e) => setForm({ ...form, link_url: e.target.value })}
@@ -160,19 +160,19 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>পজিশন</Label>
+              <Label>Position</Label>
               <Select value={form.position} onValueChange={(v) => setForm({ ...form, position: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="hero">হিরো ব্যানার</SelectItem>
-                  <SelectItem value="promo">প্রমো ব্যানার</SelectItem>
+                  <SelectItem value="hero">Hero Banner</SelectItem>
+                  <SelectItem value="promo">Promo Banner</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>সর্ট অর্ডার</Label>
+              <Label>Sort Order</Label>
               <Input
                 type="number"
                 value={form.sort_order}
@@ -185,14 +185,14 @@ export const BannerDialog = ({ open, onOpenChange, banner }: BannerDialogProps) 
               checked={form.is_active}
               onCheckedChange={(v) => setForm({ ...form, is_active: v })}
             />
-            <Label>সক্রিয়</Label>
+            <Label>Active</Label>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              {loading ? "Saving..." : "Save Banner"}
             </Button>
           </div>
         </form>

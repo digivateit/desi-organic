@@ -13,8 +13,8 @@ const AdminSettings = () => {
   const updateSettings = useUpdateSiteSettings();
 
   const [form, setForm] = useState({
-    store_name: "অর্গানিক স্টোর",
-    tagline: "প্রকৃতির স্পর্শে স্বাস্থ্যকর জীবন",
+    store_name: "Organic Store",
+    tagline: "Healthy life with nature's touch",
     phone: "",
     email: "",
     address: "",
@@ -30,7 +30,7 @@ const AdminSettings = () => {
   useEffect(() => {
     if (settings) {
       setForm({
-        store_name: settings.store_name || "অর্গানিক স্টোর",
+        store_name: settings.store_name || "Organic Store",
         tagline: settings.tagline || "",
         phone: settings.phone || "",
         email: settings.email || "",
@@ -70,19 +70,19 @@ const AdminSettings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">সেটিংস</h1>
-        <p className="text-muted-foreground">স্টোর সেটিংস পরিচালনা করুন</p>
+        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <p className="text-muted-foreground">Manage store settings</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Store Info */}
         <Card>
           <CardHeader>
-            <CardTitle>স্টোর তথ্য</CardTitle>
+            <CardTitle>Store Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="store-name">স্টোরের নাম</Label>
+              <Label htmlFor="store-name">Store Name</Label>
               <Input
                 id="store-name"
                 value={form.store_name}
@@ -90,7 +90,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tagline">ট্যাগলাইন</Label>
+              <Label htmlFor="tagline">Tagline</Label>
               <Input
                 id="tagline"
                 value={form.tagline}
@@ -98,7 +98,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">ফোন নম্বর</Label>
+              <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
                 value={form.phone}
@@ -106,7 +106,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">ইমেইল</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -115,7 +115,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="address">ঠিকানা</Label>
+              <Label htmlFor="address">Address</Label>
               <Textarea
                 id="address"
                 value={form.address}
@@ -128,11 +128,11 @@ const AdminSettings = () => {
         {/* Notification Bar */}
         <Card>
           <CardHeader>
-            <CardTitle>নোটিফিকেশন বার</CardTitle>
+            <CardTitle>Notification Bar</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="notification-1">বার্তা ১</Label>
+              <Label htmlFor="notification-1">Message 1</Label>
               <Input
                 id="notification-1"
                 value={form.notification_1}
@@ -140,7 +140,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notification-2">বার্তা ২</Label>
+              <Label htmlFor="notification-2">Message 2</Label>
               <Input
                 id="notification-2"
                 value={form.notification_2}
@@ -148,7 +148,7 @@ const AdminSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notification-3">বার্তা ৩</Label>
+              <Label htmlFor="notification-3">Message 3</Label>
               <Input
                 id="notification-3"
                 value={form.notification_3}
@@ -161,7 +161,7 @@ const AdminSettings = () => {
         {/* Social Links */}
         <Card>
           <CardHeader>
-            <CardTitle>সোশ্যাল লিংক</CardTitle>
+            <CardTitle>Social Links</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -197,16 +197,16 @@ const AdminSettings = () => {
         {/* Working Hours */}
         <Card>
           <CardHeader>
-            <CardTitle>কাজের সময়</CardTitle>
+            <CardTitle>Working Hours</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="hours">সার্ভিস টাইম</Label>
+              <Label htmlFor="hours">Service Time</Label>
               <Input
                 id="hours"
                 value={form.working_hours}
                 onChange={(e) => setForm({ ...form, working_hours: e.target.value })}
-                placeholder="প্রতিদিন সকাল ৯টা - রাত ১০টা"
+                placeholder="Daily 9 AM - 10 PM"
               />
             </div>
           </CardContent>
@@ -216,7 +216,7 @@ const AdminSettings = () => {
       <div className="flex justify-end">
         <Button className="gap-2" onClick={handleSave} disabled={updateSettings.isPending}>
           <Save className="h-4 w-4" />
-          {updateSettings.isPending ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+          {updateSettings.isPending ? "Saving..." : "Save Settings"}
         </Button>
       </div>
     </div>

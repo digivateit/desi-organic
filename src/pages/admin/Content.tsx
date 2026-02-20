@@ -9,27 +9,27 @@ const AdminContent = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">কন্টেন্ট ম্যানেজমেন্ট</h1>
-        <p className="text-muted-foreground">ব্লগ, পলিসি এবং হোম সেকশন পরিচালনা করুন</p>
+        <h1 className="text-2xl font-bold">Content Management</h1>
+        <p className="text-muted-foreground">Manage blog, policy and home sections</p>
       </div>
 
       <Tabs defaultValue="blog" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
           <TabsTrigger value="blog" className="gap-2">
             <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">ব্লগ</span>
+            <span className="hidden sm:inline">Blog</span>
           </TabsTrigger>
           <TabsTrigger value="policies" className="gap-2">
             <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">পলিসি</span>
+            <span className="hidden sm:inline">Policies</span>
           </TabsTrigger>
           <TabsTrigger value="home" className="gap-2">
             <Home className="h-4 w-4" />
-            <span className="hidden sm:inline">হোম সেকশন</span>
+            <span className="hidden sm:inline">Home Sections</span>
           </TabsTrigger>
           <TabsTrigger value="general" className="gap-2">
             <Info className="h-4 w-4" />
-            <span className="hidden sm:inline">সাধারণ তথ্য</span>
+            <span className="hidden sm:inline">General Info</span>
           </TabsTrigger>
         </TabsList>
 

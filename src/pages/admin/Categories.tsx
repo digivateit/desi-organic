@@ -68,12 +68,12 @@ const AdminCategories = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">ক্যাটাগরি</h1>
-          <p className="text-muted-foreground">পণ্যের ক্যাটাগরি পরিচালনা করুন ({categories?.length || 0}টি)</p>
+          <h1 className="text-2xl font-bold text-foreground">Categories</h1>
+          <p className="text-muted-foreground">Manage product categories ({categories?.length || 0})</p>
         </div>
         <Button className="gap-2" onClick={() => { setEditCategory(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
-          নতুন ক্যাটাগরি
+          New Category
         </Button>
       </div>
 
@@ -81,11 +81,11 @@ const AdminCategories = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ক্যাটাগরি</TableHead>
-              <TableHead>স্লাগ</TableHead>
-              <TableHead className="text-center">পণ্য সংখ্যা</TableHead>
-              <TableHead className="text-center">সক্রিয়</TableHead>
-              <TableHead className="text-right">অ্যাকশন</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead className="text-center">Products</TableHead>
+              <TableHead className="text-center">Active</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,7 +104,7 @@ const AdminCategories = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{cat.slug}</TableCell>
-                <TableCell className="text-center">{cat.products?.[0]?.count || 0}টি</TableCell>
+                <TableCell className="text-center">{cat.products?.[0]?.count || 0}</TableCell>
                 <TableCell className="text-center">
                   <Switch
                     checked={cat.is_active}
@@ -121,11 +121,11 @@ const AdminCategories = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEdit(cat)}>
                         <Edit className="h-4 w-4 mr-2" />
-                        এডিট
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive" onClick={() => setDeleteId(cat.id)}>
                         <Trash2 className="h-4 w-4 mr-2" />
-                        মুছুন
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -145,15 +145,15 @@ const AdminCategories = () => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>আপনি কি নিশ্চিত?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই ক্যাটাগরি স্থায়ীভাবে মুছে ফেলা হবে।
+              This category will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

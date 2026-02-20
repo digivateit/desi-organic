@@ -1,20 +1,21 @@
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const PromotionalBanners = () => {
+  const { t } = useTranslation();
   const banners = [
     {
       id: "1",
-      title_bn: "মধু কালেকশন",
-      subtitle_bn: "সুন্দরবনের খাঁটি মধু",
+      title: t("products.honey_collection"),
+      subtitle: t("products.pure_honey"),
       image_url: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&h=300&fit=crop",
       link_url: "/category/honey",
       bg_color: "from-amber-500/90 to-orange-600/90",
     },
     {
       id: "2",
-      title_bn: "মসলা কালেকশন",
-      subtitle_bn: "খাঁটি দেশি মসলা",
+      title: t("products.masala_collection"),
+      subtitle: t("products.pure_masala"),
       image_url: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&h=300&fit=crop",
       link_url: "/category/masala",
       bg_color: "from-red-500/90 to-rose-600/90",
@@ -34,21 +35,21 @@ const PromotionalBanners = () => {
               {/* Background Image */}
               <img
                 src={banner.image_url}
-                alt={banner.title_bn}
+                alt={banner.title}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              
+
               {/* Overlay */}
               <div className={`absolute inset-0 bg-gradient-to-r ${banner.bg_color}`} />
-              
+
               {/* Content */}
               <div className="relative h-full flex flex-col justify-center p-6 md:p-8 text-white">
                 <h3 className="text-2xl md:text-3xl font-bold mb-1">
-                  {banner.title_bn}
+                  {banner.title}
                 </h3>
-                <p className="text-white/90 mb-4">{banner.subtitle_bn}</p>
+                <p className="text-white/90 mb-4">{banner.subtitle}</p>
                 <div className="flex items-center gap-2 text-sm font-medium">
-                  <span>এখনই দেখুন</span>
+                  <span>{t("products.view_now")}</span>
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

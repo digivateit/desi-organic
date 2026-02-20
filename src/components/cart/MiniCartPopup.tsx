@@ -1,4 +1,5 @@
 import { X, ShoppingCart, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -6,7 +7,9 @@ interface MiniCartPopupProps {
   isOpen: boolean;
   onClose: () => void;
   addedItem: {
+    name?: string;
     name_bn: string;
+    variant_name?: string;
     variant_name_bn?: string;
     image_url: string;
     price: number;
@@ -23,9 +26,10 @@ const MiniCartPopup = ({
   cartTotal,
   cartItemCount,
 }: MiniCartPopupProps) => {
+  const { t, i18n } = useTranslation();
   if (!isOpen || !addedItem) return null;
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   return (
     <>
@@ -41,7 +45,7 @@ const MiniCartPopup = ({
         <div className="flex items-center justify-between p-4 border-b border-border bg-primary/5">
           <div className="flex items-center gap-2 text-primary">
             <ShoppingCart className="h-5 w-5" />
-            <span className="font-semibold">কার্টে যোগ করা হয়েছে!</span>
+            <span className="font-semibold">{t("cart.added_title")}</span>
           </div>
           <button
             onClick={onClose}
@@ -56,16 +60,16 @@ const MiniCartPopup = ({
           <div className="flex gap-4">
             <img
               src={addedItem.image_url}
-              alt={addedItem.name_bn}
+              alt={i18n.language === "bn" ? addedItem.name_bn : (addedItem.name || addedItem.name_bn)}
               className="w-20 h-20 rounded-lg object-cover border border-border"
             />
             <div className="flex-1">
               <h4 className="font-medium text-foreground line-clamp-2">
-                {addedItem.name_bn}
+                {i18n.language === "bn" ? addedItem.name_bn : (addedItem.name || addedItem.name_bn)}
               </h4>
               {addedItem.variant_name_bn && (
                 <p className="text-sm text-muted-foreground">
-                  {addedItem.variant_name_bn}
+                  {i18n.language === "bn" ? addedItem.variant_name_bn : (addedItem.variant_name || addedItem.variant_name_bn)}
                 </p>
               )}
               <div className="flex items-center justify-between mt-2">
@@ -73,7 +77,7 @@ const MiniCartPopup = ({
                   {formatPrice(addedItem.price)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  পরিমাণ: {addedItem.quantity}
+                  {t("common.quantity") || "Quantity"}: {addedItem.quantity}
                 </span>
               </div>
             </div>
@@ -84,7 +88,7 @@ const MiniCartPopup = ({
         <div className="px-4 py-3 bg-muted/50 border-t border-border">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
-              কার্টে মোট ({cartItemCount}টি পণ্য)
+              {t("common.cart") || "Cart"} {t("cart.total")} ({cartItemCount}{t("cart.items_suffix")})
             </span>
             <span className="font-bold text-foreground">
               {formatPrice(cartTotal)}
@@ -97,7 +101,7 @@ const MiniCartPopup = ({
           <Link to="/cart" onClick={onClose}>
             <Button className="w-full" size="lg">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              কার্ট দেখুন
+              {t("cart.view_cart")}
             </Button>
           </Link>
           <Button
@@ -106,7 +110,7 @@ const MiniCartPopup = ({
             onClick={onClose}
             className="w-full"
           >
-            কেনাকাটা চালিয়ে যান
+            {t("cart.continue_shopping")}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>

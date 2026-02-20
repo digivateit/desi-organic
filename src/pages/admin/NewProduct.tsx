@@ -30,13 +30,13 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
-  name: z.string().min(1, "ইংরেজি নাম আবশ্যক"),
-  name_bn: z.string().min(1, "বাংলা নাম আবশ্যক"),
-  slug: z.string().min(1, "স্লাগ আবশ্যক"),
+  name: z.string().min(1, "English name is required"),
+  name_bn: z.string().min(1, "Bengali name is required"),
+  slug: z.string().min(1, "Slug is required"),
   description: z.string().optional(),
   description_bn: z.string().optional(),
   category_id: z.string().optional(),
-  base_price: z.number().min(0, "দাম ০ বা তার বেশি হতে হবে"),
+  base_price: z.number().min(0, "Price must be 0 or more"),
   sale_price: z.number().optional(),
   stock_quantity: z.number().min(0).default(0),
   sku: z.string().optional(),
@@ -123,12 +123,12 @@ const AdminNewProduct = () => {
 
       if (error) throw error;
 
-      toast.success("পণ্য সফলভাবে যোগ হয়েছে");
+      toast.success("Product added successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       navigate("/admin/products");
     } catch (error: any) {
       console.error("Error creating product:", error);
-      toast.error("পণ্য যোগ করা যায়নি");
+      toast.error("Could not add product");
     } finally {
       setSaving(false);
     }
@@ -141,8 +141,8 @@ const AdminNewProduct = () => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">নতুন পণ্য যোগ করুন</h1>
-          <p className="text-muted-foreground">পণ্যের সব তথ্য পূরণ করুন</p>
+          <h1 className="text-2xl font-bold">Add New Product</h1>
+          <p className="text-muted-foreground">Fill in all product information</p>
         </div>
       </div>
 
@@ -153,7 +153,7 @@ const AdminNewProduct = () => {
             <div className="lg:col-span-2 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>মৌলিক তথ্য</CardTitle>
+                  <CardTitle>Basic Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -162,7 +162,7 @@ const AdminNewProduct = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>নাম (ইংরেজি)</FormLabel>
+                          <FormLabel>Name (English)</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
@@ -181,7 +181,7 @@ const AdminNewProduct = () => {
                       name="name_bn"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>নাম (বাংলা) *</FormLabel>
+                          <FormLabel>Name (Bengali) *</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -196,7 +196,7 @@ const AdminNewProduct = () => {
                     name="slug"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>স্লাগ (URL) *</FormLabel>
+                        <FormLabel>Slug (URL) *</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -210,7 +210,7 @@ const AdminNewProduct = () => {
                     name="description_bn"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>বিবরণ (বাংলা)</FormLabel>
+                        <FormLabel>Description (Bengali)</FormLabel>
                         <FormControl>
                           <Textarea {...field} rows={4} />
                         </FormControl>
@@ -223,12 +223,12 @@ const AdminNewProduct = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>ছবি</CardTitle>
+                  <CardTitle>Images</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex gap-2">
                     <Input
-                      placeholder="ছবির URL পেস্ট করুন"
+                      placeholder="Paste image URL"
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
                     />
@@ -271,7 +271,7 @@ const AdminNewProduct = () => {
                     name="meta_title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>মেটা টাইটেল</FormLabel>
+                        <FormLabel>Meta Title</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -284,7 +284,7 @@ const AdminNewProduct = () => {
                     name="meta_description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>মেটা ডেসক্রিপশন</FormLabel>
+                        <FormLabel>Meta Description</FormLabel>
                         <FormControl>
                           <Textarea {...field} rows={2} />
                         </FormControl>
@@ -300,7 +300,7 @@ const AdminNewProduct = () => {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>মূল্য ও স্টক</CardTitle>
+                  <CardTitle>Price & Stock</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -308,7 +308,7 @@ const AdminNewProduct = () => {
                     name="base_price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>নিয়মিত দাম (৳) *</FormLabel>
+                        <FormLabel>Regular Price (৳) *</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -325,7 +325,7 @@ const AdminNewProduct = () => {
                     name="sale_price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>সেল দাম (৳)</FormLabel>
+                        <FormLabel>Sale Price (৳)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -343,7 +343,7 @@ const AdminNewProduct = () => {
                     name="stock_quantity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>স্টক পরিমাণ</FormLabel>
+                        <FormLabel>Stock Quantity</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -373,7 +373,7 @@ const AdminNewProduct = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>সংগঠন</CardTitle>
+                  <CardTitle>Organization</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -381,11 +381,11 @@ const AdminNewProduct = () => {
                     name="category_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>ক্যাটাগরি</FormLabel>
+                        <FormLabel>Category</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="ক্যাটাগরি নির্বাচন করুন" />
+                              <SelectValue placeholder="Select Category" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -405,7 +405,7 @@ const AdminNewProduct = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>স্ট্যাটাস</CardTitle>
+                  <CardTitle>Status</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -413,7 +413,7 @@ const AdminNewProduct = () => {
                     name="is_active"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between">
-                        <FormLabel>সক্রিয়</FormLabel>
+                        <FormLabel>Active</FormLabel>
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -425,7 +425,7 @@ const AdminNewProduct = () => {
                     name="is_featured"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between">
-                        <FormLabel>বিশেষ পণ্য</FormLabel>
+                        <FormLabel>Featured Product</FormLabel>
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -437,7 +437,7 @@ const AdminNewProduct = () => {
 
               <Button type="submit" className="w-full gap-2" disabled={saving}>
                 <Save className="h-4 w-4" />
-                {saving ? "সংরক্ষণ হচ্ছে..." : "পণ্য সংরক্ষণ করুন"}
+                {saving ? "Saving..." : "Save Product"}
               </Button>
             </div>
           </div>

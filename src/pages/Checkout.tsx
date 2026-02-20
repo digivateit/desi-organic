@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,17 +22,17 @@ import Footer from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { trackPurchase } from "@/lib/tracking";
 
-const checkoutSchema = z.object({
-  fullName: z.string().min(2, "নাম দিন"),
-  phone: z.string().min(11, "সঠিক ফোন নম্বর দিন").max(14),
-  email: z.string().email("সঠিক ইমেইল দিন").optional().or(z.literal("")),
-  address: z.string().min(10, "সম্পূর্ণ ঠিকানা দিন"),
-  city: z.string().min(2, "শহর/জেলা দিন"),
+const getCheckoutSchema = (t: any) => z.object({
+  fullName: z.string().min(2, t("checkout.errors.name_required")),
+  phone: z.string().min(11, t("checkout.errors.phone_required")).max(14),
+  email: z.string().email(t("checkout.errors.email_invalid")).optional().or(z.literal("")),
+  address: z.string().min(10, t("checkout.errors.address_required")),
+  city: z.string().min(2, t("checkout.errors.city_required")),
   area: z.string().optional(),
   notes: z.string().optional(),
 });
 
-type CheckoutFormData = z.infer<typeof checkoutSchema>;
+type CheckoutFormData = z.infer<ReturnType<typeof getCheckoutSchema>>;
 
 interface DeliveryZone {
   id: string;
@@ -41,6 +42,7 @@ interface DeliveryZone {
 }
 
 const Checkout = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { items, getItemCount, getSubtotal, getQuantityDiscount, clearCart } = useCart();
   const { user } = useAuth();
@@ -61,7 +63,7 @@ const Checkout = () => {
     formState: { errors },
     watch,
   } = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
+    resolver: zodResolver(getCheckoutSchema(t)),
   });
 
   const watchedFields = watch();
@@ -85,10 +87,10 @@ const Checkout = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("delivery_zones")
-        .select("id, name_bn, charge, estimated_days")
+        .select("id, name, name_bn, charge, estimated_days")
         .eq("is_active", true)
         .order("charge", { ascending: true });
-      
+
       if (error) throw error;
       return data as DeliveryZone[];
     },
@@ -110,7 +112,7 @@ const Checkout = () => {
   const total = subtotal - totalDiscount + deliveryCharge;
   const partialPayment = paymentMethod === "partial" ? Math.max(deliveryCharge, Math.round(total * 0.1)) : 0;
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   const applyCoupon = async () => {
     try {
@@ -123,8 +125,8 @@ const Checkout = () => {
 
       if (error || !coupon) {
         toast({
-          title: "অবৈধ কুপন",
-          description: "কুপন কোডটি সঠিক নয়",
+          title: t("checkout.invalid_coupon"),
+          description: t("checkout.coupon_not_found"),
           variant: "destructive",
         });
         return;
@@ -133,17 +135,17 @@ const Checkout = () => {
       // Check validity
       const now = new Date();
       if (coupon.valid_from && new Date(coupon.valid_from) > now) {
-        toast({ title: "কুপন এখনো সক্রিয় হয়নি", variant: "destructive" });
+        toast({ title: t("checkout.coupon_not_active"), variant: "destructive" });
         return;
       }
       if (coupon.valid_until && new Date(coupon.valid_until) < now) {
-        toast({ title: "কুপনের মেয়াদ শেষ", variant: "destructive" });
+        toast({ title: t("checkout.coupon_expired"), variant: "destructive" });
         return;
       }
       if (coupon.min_order_amount && subtotal < coupon.min_order_amount) {
-        toast({ 
-          title: `ন্যূনতম অর্ডার ${formatPrice(coupon.min_order_amount)} প্রয়োজন`, 
-          variant: "destructive" 
+        toast({
+          title: t("checkout.min_order_required", { amount: formatPrice(coupon.min_order_amount) }),
+          variant: "destructive"
         });
         return;
       }
@@ -161,12 +163,12 @@ const Checkout = () => {
       setCouponDiscount(discount);
       setCouponApplied(true);
       toast({
-        title: "কুপন প্রয়োগ করা হয়েছে!",
-        description: `ছাড়: ${formatPrice(discount)}`,
+        title: t("checkout.coupon_applied_success"),
+        description: t("checkout.discount_amt", { amount: formatPrice(discount) }),
       });
     } catch (error) {
       toast({
-        title: "কুপন চেক করতে সমস্যা হয়েছে",
+        title: t("checkout.order_failed"),
         variant: "destructive",
       });
     }
@@ -175,8 +177,8 @@ const Checkout = () => {
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
       toast({
-        title: "কার্ট খালি",
-        description: "অর্ডার করতে কার্টে পণ্য যোগ করুন",
+        title: t("cart.empty_title"),
+        description: t("cart.empty_desc"),
         variant: "destructive",
       });
       return;
@@ -188,7 +190,7 @@ const Checkout = () => {
       // Handle UddoktaPay payment
       if (paymentMethod === "uddoktapay") {
         const paymentAmount = total;
-        
+
         // Store pending order data
         const pendingOrder = {
           customerName: data.fullName,
@@ -207,13 +209,13 @@ const Checkout = () => {
           userId: user?.id || null,
           items: items.map(item => ({
             productId: item.productId,
-            name: item.name_bn,
-            variantName: item.variant_name_bn || null,
+            name: i18n.language === "bn" ? item.name_bn : (item.name || item.name_bn),
+            variantName: i18n.language === "bn" ? item.variant_name_bn : (item.variant_name || item.variant_name_bn),
             quantity: item.quantity,
             price: item.price,
           })),
         };
-        
+
         localStorage.setItem("pending_order", JSON.stringify(pendingOrder));
 
         // Create payment charge
@@ -233,8 +235,8 @@ const Checkout = () => {
           return;
         } else {
           toast({
-            title: "পেমেন্ট তৈরি করতে সমস্যা হয়েছে",
-            description: result.message || "আবার চেষ্টা করুন",
+            title: t("checkout.order_failed"),
+            description: result.message || t("checkout.processing"),
             variant: "destructive",
           });
           setIsSubmitting(false);
@@ -263,7 +265,7 @@ const Checkout = () => {
         coupon_code: couponApplied ? couponCode : null,
         user_id: user?.id || null,
       };
-      
+
       const { data: order, error } = await supabase
         .from("orders")
         .insert(orderInsertData as any)
@@ -278,8 +280,8 @@ const Checkout = () => {
           items.map(item => ({
             order_id: order.id,
             product_id: item.productId,
-            product_name: item.name_bn,
-            variant_name: item.variant_name_bn || null,
+            product_name: i18n.language === "bn" ? item.name_bn : (item.name || item.name_bn),
+            variant_name: i18n.language === "bn" ? item.variant_name_bn : (item.variant_name || item.variant_name_bn),
             quantity: item.quantity,
             unit_price: item.price,
             total_price: item.price * item.quantity,
@@ -289,7 +291,7 @@ const Checkout = () => {
 
       // Mark incomplete order as converted and clear cart
       await markAsConverted();
-      
+
       // Track Purchase event with hashed customer data
       trackPurchase({
         content_ids: items.map(item => item.productId),
@@ -300,24 +302,24 @@ const Checkout = () => {
         customer_name: data.fullName,
         customer_phone: data.phone,
         customer_email: data.email || undefined,
-        
+
         customer_city: data.city,
         order_id: order.order_number,
       });
 
       clearCart();
-      
+
       toast({
-        title: "অর্ডার সফল হয়েছে!",
-        description: `অর্ডার নম্বর: ${order.order_number}`,
+        title: t("checkout.order_success"),
+        description: `${t("checkout.order_number_label")}: ${order.order_number}`,
       });
 
       navigate(`/order-confirmation/${order.order_number.replace('#', '')}`);
     } catch (error) {
       console.error("Order error:", error);
       toast({
-        title: "অর্ডার ব্যর্থ হয়েছে",
-        description: "আবার চেষ্টা করুন",
+        title: t("checkout.order_failed"),
+        description: t("cart.empty_desc"),
         variant: "destructive",
       });
     } finally {
@@ -331,9 +333,9 @@ const Checkout = () => {
         <Header cartCount={0} />
         <main className="flex-1 flex items-center justify-center py-12">
           <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold text-foreground">কার্ট খালি</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("cart.empty_title")}</h1>
             <Link to="/shop">
-              <Button>কেনাকাটা করুন</Button>
+              <Button>{t("cart.start_shopping")}</Button>
             </Link>
           </div>
         </main>
@@ -355,7 +357,7 @@ const Checkout = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">চেকআউট</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">{t("checkout.title")}</h1>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -368,15 +370,15 @@ const Checkout = () => {
                     <div className="w-10 h-10 rounded-full gradient-organic flex items-center justify-center">
                       <MapPin className="h-5 w-5 text-primary-foreground" />
                     </div>
-                    <h2 className="text-lg font-bold text-foreground">ডেলিভারি তথ্য</h2>
+                    <h2 className="text-lg font-bold text-foreground">{t("checkout.delivery_info")}</h2>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">নাম *</Label>
+                      <Label htmlFor="fullName">{t("checkout.full_name")}</Label>
                       <Input
                         id="fullName"
-                        placeholder="আপনার নাম"
+                        placeholder={t("checkout.name_placeholder")}
                         {...register("fullName")}
                       />
                       {errors.fullName && (
@@ -385,10 +387,10 @@ const Checkout = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">ফোন নম্বর *</Label>
+                      <Label htmlFor="phone">{t("checkout.phone")}</Label>
                       <Input
                         id="phone"
-                        placeholder="০১XXXXXXXXX"
+                        placeholder={t("checkout.phone_placeholder")}
                         {...register("phone")}
                       />
                       {errors.phone && (
@@ -397,20 +399,20 @@ const Checkout = () => {
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="email">ইমেইল (ঐচ্ছিক)</Label>
+                      <Label htmlFor="email">{t("checkout.email_optional")}</Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder={t("checkout.email_placeholder")}
                         {...register("email")}
                       />
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="address">সম্পূর্ণ ঠিকানা *</Label>
+                      <Label htmlFor="address">{t("checkout.address_label")}</Label>
                       <Textarea
                         id="address"
-                        placeholder="বাড়ি নম্বর, রাস্তা, এলাকা"
+                        placeholder={t("checkout.address_placeholder")}
                         {...register("address")}
                       />
                       {errors.address && (
@@ -419,10 +421,10 @@ const Checkout = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="city">শহর/জেলা *</Label>
+                      <Label htmlFor="city">{t("checkout.city_label")}</Label>
                       <Input
                         id="city"
-                        placeholder="ঢাকা"
+                        placeholder={t("checkout.city_placeholder")}
                         {...register("city")}
                       />
                       {errors.city && (
@@ -431,19 +433,19 @@ const Checkout = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="area">এলাকা</Label>
+                      <Label htmlFor="area">{t("checkout.area_label")}</Label>
                       <Input
                         id="area"
-                        placeholder="মিরপুর"
+                        placeholder={t("checkout.area_placeholder")}
                         {...register("area")}
                       />
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="notes">অতিরিক্ত নোট</Label>
+                      <Label htmlFor="notes">{t("checkout.notes_label")}</Label>
                       <Textarea
                         id="notes"
-                        placeholder="বিশেষ কোনো নির্দেশনা থাকলে লিখুন"
+                        placeholder={t("checkout.notes_placeholder")}
                         {...register("notes")}
                       />
                     </div>
@@ -456,7 +458,7 @@ const Checkout = () => {
                     <div className="w-10 h-10 rounded-full gradient-organic flex items-center justify-center">
                       <Truck className="h-5 w-5 text-primary-foreground" />
                     </div>
-                    <h2 className="text-lg font-bold text-foreground">ডেলিভারি জোন</h2>
+                    <h2 className="text-lg font-bold text-foreground">{t("checkout.delivery_zone")}</h2>
                   </div>
 
                   <RadioGroup value={selectedZone} onValueChange={setSelectedZone}>
@@ -464,17 +466,18 @@ const Checkout = () => {
                       {deliveryZones.map((zone) => (
                         <label
                           key={zone.id}
-                          className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${
-                            selectedZone === zone.id
+                          className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${selectedZone === zone.id
                               ? "border-primary bg-primary/5"
                               : "border-border hover:border-primary/50"
-                          }`}
+                            }`}
                         >
                           <RadioGroupItem value={zone.id} />
                           <div className="flex-1">
-                            <p className="font-medium text-foreground">{zone.name_bn}</p>
+                            <p className="font-medium text-foreground">
+                              {i18n.language === "bn" ? zone.name_bn : (zone.name || zone.name_bn)}
+                            </p>
                             <p className="text-sm text-muted-foreground">
-                              {zone.estimated_days} দিনের মধ্যে ডেলিভারি
+                              {t("checkout.estimated_delivery", { days: zone.estimated_days })}
                             </p>
                           </div>
                           <span className="font-bold text-primary">
@@ -493,7 +496,7 @@ const Checkout = () => {
                       <div className="w-10 h-10 rounded-full gradient-organic flex items-center justify-center">
                         <CreditCard className="h-5 w-5 text-primary-foreground" />
                       </div>
-                      <h2 className="text-lg font-bold text-foreground">পেমেন্ট পদ্ধতি</h2>
+                      <h2 className="text-lg font-bold text-foreground">{t("checkout.payment_method")}</h2>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Settings className="h-3 w-3" />
@@ -509,52 +512,49 @@ const Checkout = () => {
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="space-y-3">
                       <label
-                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${
-                          paymentMethod === "cod"
+                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${paymentMethod === "cod"
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
-                        }`}
+                          }`}
                       >
                         <RadioGroupItem value="cod" />
                         <div className="flex-1">
-                          <p className="font-medium text-foreground">ক্যাশ অন ডেলিভারি</p>
+                          <p className="font-medium text-foreground">{t("checkout.cod")}</p>
                           <p className="text-sm text-muted-foreground">
-                            পণ্য হাতে পেয়ে টাকা দিন
+                            {t("checkout.cod_desc")}
                           </p>
                         </div>
                       </label>
 
                       <label
-                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${
-                          paymentMethod === "uddoktapay"
+                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${paymentMethod === "uddoktapay"
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
-                        }`}
+                          }`}
                       >
                         <RadioGroupItem value="uddoktapay" />
                         <div className="flex-1">
-                          <p className="font-medium text-foreground">অনলাইন পেমেন্ট (bKash/Nagad/Card)</p>
+                          <p className="font-medium text-foreground">{t("checkout.online_payment")}</p>
                           <p className="text-sm text-muted-foreground">
-                            UddoktaPay এর মাধ্যমে নিরাপদ পেমেন্ট
+                            {t("checkout.online_payment_desc")}
                           </p>
                         </div>
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                          নিরাপদ
+                          {t("products.featured_badge")}
                         </span>
                       </label>
 
                       <label
-                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${
-                          paymentMethod === "partial"
+                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${paymentMethod === "partial"
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
-                        }`}
+                          }`}
                       >
                         <RadioGroupItem value="partial" />
                         <div className="flex-1">
-                          <p className="font-medium text-foreground">আংশিক পেমেন্ট</p>
+                          <p className="font-medium text-foreground">{t("checkout.partial_payment")}</p>
                           <p className="text-sm text-muted-foreground">
-                            {formatPrice(partialPayment || Math.max(deliveryCharge, Math.round(total * 0.1)))} এখন দিন, বাকি ডেলিভারিতে
+                            {t("checkout.partial_payment_desc", { amount: formatPrice(partialPayment || Math.max(deliveryCharge, Math.round(total * 0.1))) })}
                           </p>
                         </div>
                       </label>
@@ -567,7 +567,7 @@ const Checkout = () => {
               <div className="lg:col-span-1">
                 <div className="bg-card rounded-xl p-6 border border-border sticky top-24">
                   <h2 className="text-lg font-bold text-foreground mb-4">
-                    অর্ডার সারাংশ
+                    {t("cart.order_summary")}
                   </h2>
 
                   {/* Items */}
@@ -581,10 +581,10 @@ const Checkout = () => {
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-foreground line-clamp-1">
-                            {item.name_bn}
+                            {i18n.language === "bn" ? item.name_bn : (item.name || item.name_bn)}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {item.variant_name_bn} × {item.quantity}
+                            {i18n.language === "bn" ? item.variant_name_bn : (item.variant_name || item.variant_name_bn)} × {item.quantity}
                           </p>
                         </div>
                         <span className="text-sm font-medium">
@@ -599,7 +599,7 @@ const Checkout = () => {
                     <div className="relative flex-1">
                       <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="কুপন কোড"
+                        placeholder={t("checkout.coupon_code")}
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
                         className="pl-10"
@@ -612,51 +612,51 @@ const Checkout = () => {
                       onClick={applyCoupon}
                       disabled={couponApplied || !couponCode}
                     >
-                      {couponApplied ? <Check className="h-4 w-4" /> : "প্রয়োগ"}
+                      {couponApplied ? t("checkout.applied") : t("checkout.apply")}
                     </Button>
                   </div>
 
                   {/* Totals */}
                   <div className="space-y-3 text-sm border-t border-border pt-4">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">সাবটোটাল</span>
+                      <span className="text-muted-foreground">{t("cart.subtotal")}</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
 
                     {quantityDiscount > 0 && (
                       <div className="flex justify-between text-primary">
-                        <span>পরিমাণ ছাড়</span>
+                        <span>{t("checkout.quantity_discount")}</span>
                         <span>-{formatPrice(quantityDiscount)}</span>
                       </div>
                     )}
 
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-primary">
-                        <span>কুপন ছাড়</span>
+                        <span>{t("checkout.coupon_discount")}</span>
                         <span>-{formatPrice(couponDiscount)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
+                      <span className="text-muted-foreground">{t("checkout.delivery_charge")}</span>
                       <span>{formatPrice(deliveryCharge)}</span>
                     </div>
 
                     <div className="border-t border-border pt-3 flex justify-between text-base">
-                      <span className="font-semibold">সর্বমোট</span>
+                      <span className="font-semibold">{t("checkout.grand_total")}</span>
                       <span className="font-bold text-primary">{formatPrice(total)}</span>
                     </div>
 
                     {paymentMethod === "partial" && (
                       <div className="bg-accent/10 rounded-lg p-3 text-center">
-                        <p className="text-sm text-muted-foreground">এখন দিতে হবে</p>
+                        <p className="text-sm text-muted-foreground">{t("checkout.pay_now_desc")}</p>
                         <p className="text-lg font-bold text-accent">{formatPrice(partialPayment)}</p>
                       </div>
                     )}
 
                     {paymentMethod === "uddoktapay" && (
                       <div className="bg-green-50 rounded-lg p-3 text-center">
-                        <p className="text-sm text-green-700">সম্পূর্ণ অগ্রিম পেমেন্ট</p>
+                        <p className="text-sm text-green-700">{t("checkout.pay_full_desc")}</p>
                         <p className="text-lg font-bold text-green-700">{formatPrice(total)}</p>
                       </div>
                     )}
@@ -669,20 +669,20 @@ const Checkout = () => {
                     disabled={isSubmitting || paymentLoading}
                   >
                     {isSubmitting || paymentLoading ? (
-                      "প্রসেসিং..."
+                      t("checkout.processing")
                     ) : paymentMethod === "uddoktapay" ? (
-                      "পেমেন্ট করুন"
+                      t("checkout.pay_now")
                     ) : (
-                      "অর্ডার কনফার্ম করুন"
+                      t("checkout.confirm_order")
                     )}
                   </Button>
 
                   {!user && (
                     <p className="text-xs text-center text-muted-foreground mt-3">
                       <Link to="/auth" className="text-primary hover:underline">
-                        লগইন করুন
+                        {t("common.account")}
                       </Link>
-                      {" "}অর্ডার ট্র্যাক করতে
+                      {" "}{t("checkout.login_to_track")}
                     </p>
                   )}
                 </div>

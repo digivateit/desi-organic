@@ -1,12 +1,14 @@
 import { FileText } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useCart } from "@/contexts/CartContext";
 
 const Terms = () => {
+  const { t, i18n } = useTranslation();
   const { getItemCount } = useCart();
 
-  const sections = [
+  const sections_bn = [
     {
       title: "১. সাধারণ শর্তাবলী",
       content: [
@@ -74,6 +76,76 @@ const Terms = () => {
     },
   ];
 
+  const sections_en = [
+    {
+      title: "1. General Terms",
+      content: [
+        "By using this website, you accept these terms and conditions.",
+        "We reserve the right to change these terms at any time.",
+        "Price and availability of all products are subject to change.",
+      ],
+    },
+    {
+      title: "2. Orders & Payment",
+      content: [
+        "You will receive a confirmation SMS/phone call after placing an order.",
+        "Cash on Delivery and online payments are acceptable.",
+        "If you want to cancel an order, you must inform us before shipping.",
+        "Providing incorrect information may lead to order cancellation.",
+      ],
+    },
+    {
+      title: "3. Delivery",
+      content: [
+        "Delivery time is approximate and not guaranteed.",
+        "Delays may occur due to natural disasters or uncontrollable factors.",
+        "Providing correct address and phone number is the customer's responsibility.",
+      ],
+    },
+    {
+      title: "4. Returns & Refunds",
+      content: [
+        "Returns are acceptable as per the return policy.",
+        "Refund processing may take 3-7 working days.",
+        "Used or damaged products will not be returned.",
+      ],
+    },
+    {
+      title: "5. Privacy",
+      content: [
+        "Your personal information is kept secure.",
+        "Information is not shared with third parties.",
+        "Information is used only for order processing.",
+      ],
+    },
+    {
+      title: "6. Product Quality",
+      content: [
+        "Guarantee for all products to be 100% organic and pure.",
+        "Replacement or refund will be provided for quality issues.",
+        "Product images may differ slightly from the actual product.",
+      ],
+    },
+    {
+      title: "7. Limitation of Liability",
+      content: [
+        "We are not liable for indirect damages.",
+        "Maximum liability is limited to the product price.",
+        "Not responsible for technical issues on the website.",
+      ],
+    },
+    {
+      title: "8. Dispute Resolution",
+      content: [
+        "All disputes will be resolved according to the laws of Bangladesh.",
+        "Attempts will be made to resolve through direct discussion first.",
+        "Legal steps can be taken if resolution isn't reached through discussion.",
+      ],
+    },
+  ];
+
+  const currentSections = i18n.language === "bn" ? sections_bn : sections_en;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header cartCount={getItemCount()} />
@@ -85,16 +157,16 @@ const Terms = () => {
               <FileText className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              টার্মস & কন্ডিশন
+              {t("policies.terms.title")}
             </h1>
             <p className="text-muted-foreground">
-              সর্বশেষ আপডেট: জানুয়ারি ২০২৬
+              {i18n.language === "bn" ? "সর্বশেষ আপডেট: জানুয়ারি ২০২৬" : "Last updated: January 2026"}
             </p>
           </div>
 
           <div className="bg-card rounded-xl border border-border p-6 md:p-8">
             <div className="space-y-8">
-              {sections.map((section, idx) => (
+              {currentSections.map((section, idx) => (
                 <div key={idx}>
                   <h2 className="text-lg font-semibold text-foreground mb-3">
                     {section.title}
@@ -113,9 +185,9 @@ const Terms = () => {
 
             <div className="mt-8 pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground">
-                এই শর্তাবলী সম্পর্কে প্রশ্ন থাকলে{" "}
+                {t("policies.terms.contact_terms")}{" "}
                 <a href="/contact" className="text-primary hover:underline">
-                  আমাদের সাথে যোগাযোগ করুন
+                  {t("policies.terms.contact_us")}
                 </a>
                 ।
               </p>

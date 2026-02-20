@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 
 interface Review {
@@ -12,44 +13,45 @@ interface Review {
 }
 
 const CustomerReviews = () => {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Demo reviews - will be replaced with Supabase data
   const reviews: Review[] = [
     {
       id: "1",
-      customer_name: "রহিম উদ্দিন",
+      customer_name: t("reviews.review_1_name"),
       rating: 5,
-      comment: "সুন্দরবনের মধু অসাধারণ! এত খাঁটি মধু আগে কখনো খাইনি। পুরো পরিবার খুব খুশি।",
-      product_name: "সুন্দরবনের খাঁটি মধু",
+      comment: t("reviews.review_1_comment"),
+      product_name: t("reviews.review_1_product"),
     },
     {
       id: "2",
-      customer_name: "ফাতেমা বেগম",
+      customer_name: t("reviews.review_2_name"),
       rating: 5,
-      comment: "ঘি এর মান অতুলনীয়। রান্নায় ব্যবহার করলে আলাদা স্বাদ পাওয়া যায়। ধন্যবাদ অর্গানিক স্টোরকে।",
-      product_name: "খাঁটি গাওয়া ঘি",
+      comment: t("reviews.review_2_comment"),
+      product_name: t("reviews.review_2_product"),
     },
     {
       id: "3",
-      customer_name: "করিম সাহেব",
+      customer_name: t("reviews.review_3_name"),
       rating: 4,
-      comment: "ডেলিভারি খুব দ্রুত হয়েছে। পণ্যের মান ভালো। আবার অর্ডার করব।",
-      product_name: "মিক্সড ড্রাই ফ্রুটস",
+      comment: t("reviews.review_3_comment"),
+      product_name: t("reviews.review_3_product"),
     },
     {
       id: "4",
-      customer_name: "নাসরিন আক্তার",
+      customer_name: t("reviews.review_4_name"),
       rating: 5,
-      comment: "বাচ্চাদের জন্য খাঁটি মধু খুঁজছিলাম। এখানে পেয়ে গেলাম। প্যাকেজিংও সুন্দর ছিল।",
-      product_name: "সুন্দরবনের খাঁটি মধু",
+      comment: t("reviews.review_4_comment"),
+      product_name: t("reviews.review_4_product"),
     },
     {
       id: "5",
-      customer_name: "আলী হোসেন",
+      customer_name: t("reviews.review_5_name"),
       rating: 5,
-      comment: "চিনিগুঁড়া চাল এত ভালো মানের! পোলাও রান্না করলে অন্য রকম সুগন্ধ। সবাইকে recommend করছি।",
-      product_name: "চিনিগুঁড়া চাল",
+      comment: t("reviews.review_5_comment"),
+      product_name: t("reviews.review_5_product"),
     },
   ];
 
@@ -69,10 +71,10 @@ const CustomerReviews = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              গ্রাহকদের মতামত
+              {t("reviews.title")}
             </h2>
             <p className="text-muted-foreground mt-1">
-              আমাদের সম্মানিত গ্রাহকদের অভিজ্ঞতা
+              {t("reviews.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -113,11 +115,10 @@ const CustomerReviews = () => {
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${
-                      i < review.rating
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-muted"
-                    }`}
+                    className={`h-4 w-4 ${i < review.rating
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-muted"
+                      }`}
                   />
                 ))}
               </div>

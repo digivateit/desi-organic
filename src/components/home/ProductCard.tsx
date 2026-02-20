@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
@@ -8,6 +8,7 @@ import { trackAddToCart } from "@/lib/tracking";
 
 interface ProductCardProps {
   id: string;
+  name?: string;
   name_bn: string;
   slug: string;
   image_url?: string;
@@ -22,6 +23,7 @@ interface ProductCardProps {
 
 const ProductCard = ({
   id,
+  name,
   name_bn,
   slug,
   image_url,
@@ -33,10 +35,13 @@ const ProductCard = ({
   stock_quantity = 0,
   onAddToCart,
 }: ProductCardProps) => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { toast } = useToast();
-  
+
+  const currentName = i18n.language.startsWith("bn") ? name_bn : (name || name_bn);
+
   const hasDiscount = sale_price && sale_price < base_price;
   const discountPercentage = hasDiscount
     ? Math.round(((base_price - sale_price) / base_price) * 100)
@@ -44,18 +49,19 @@ const ProductCard = ({
   const isOutOfStock = stock_quantity <= 0;
 
   const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString("bn-BD")}`;
+    return `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isOutOfStock) return;
 
     addItem({
       productId: id,
       name_bn: name_bn,
+      name: name,
       image_url: image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop",
       price: sale_price || base_price,
       quantity: 1,
@@ -64,7 +70,7 @@ const ProductCard = ({
 
     // Track AddToCart event
     trackAddToCart({
-      content_name: name_bn,
+      content_name: currentName,
       content_ids: [id],
       content_type: 'product',
       value: sale_price || base_price,
@@ -72,8 +78,8 @@ const ProductCard = ({
     });
 
     toast({
-      title: "কার্টে যোগ হয়েছে",
-      description: name_bn,
+      title: t("products.added_to_cart"),
+      description: currentName,
     });
 
     // Navigate to cart page
@@ -86,21 +92,21 @@ const ProductCard = ({
       <Link to={`/product/${slug}`} className="block relative aspect-square overflow-hidden">
         <img
           src={image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop"}
-          alt={name_bn}
+          alt={currentName}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
-        
+
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {is_featured && (
             <Badge className="bg-accent text-accent-foreground text-xs">
-              বিশেষ
+              {t("products.featured_badge")}
             </Badge>
           )}
           {hasDiscount && (
             <Badge className="bg-destructive text-destructive-foreground text-xs">
-              {discountPercentage}% ছাড়
+              {discountPercentage}% {t("products.discount")}
             </Badge>
           )}
         </div>
@@ -108,7 +114,7 @@ const ProductCard = ({
         {/* Out of Stock Overlay */}
         {isOutOfStock && (
           <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">স্টক শেষ</span>
+            <span className="text-primary-foreground font-bold text-lg">{t("products.out_of_stock")}</span>
           </div>
         )}
       </Link>
@@ -127,7 +133,7 @@ const ProductCard = ({
         {/* Name */}
         <Link to={`/product/${slug}`}>
           <h3 className="font-semibold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-            {name_bn}
+            {currentName}
           </h3>
         </Link>
 
@@ -175,7 +181,7 @@ const ProductCard = ({
             disabled={isOutOfStock}
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
-            কার্টে যোগ করুন
+            {t("products.add_to_cart")}
           </Button>
         </div>
       </div>

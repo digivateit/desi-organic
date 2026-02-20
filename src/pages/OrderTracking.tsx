@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams, Link } from "react-router-dom";
-import { 
-  Search, Package, Truck, CheckCircle, Clock, MapPin, Phone, 
+import {
+  Search, Package, Truck, CheckCircle, Clock, MapPin, Phone,
   ExternalLink, Calendar, CreditCard, Download, ArrowLeft,
   AlertCircle, XCircle, RefreshCw
 } from "lucide-react";
@@ -47,6 +48,7 @@ interface OrderData {
 }
 
 const OrderTracking = () => {
+  const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const [trackingInput, setTrackingInput] = useState(searchParams.get("order") || "");
   const [order, setOrder] = useState<OrderData | null>(null);
@@ -70,20 +72,20 @@ const OrderTracking = () => {
   };
 
   const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    pending: { label: "অর্ডার করা হয়েছে", color: "bg-yellow-100 text-yellow-700", icon: Clock },
-    confirmed: { label: "কনফার্ম হয়েছে", color: "bg-blue-100 text-blue-700", icon: CheckCircle },
-    processing: { label: "প্রসেসিং চলছে", color: "bg-orange-100 text-orange-700", icon: Package },
-    shipped: { label: "শিপ করা হয়েছে", color: "bg-indigo-100 text-indigo-700", icon: Truck },
-    delivered: { label: "ডেলিভারি সম্পন্ন", color: "bg-green-100 text-green-700", icon: CheckCircle },
-    cancelled: { label: "বাতিল", color: "bg-red-100 text-red-700", icon: XCircle },
-    refunded: { label: "রিফান্ড হয়েছে", color: "bg-purple-100 text-purple-700", icon: RefreshCw },
+    pending: { label: t("checkout.confirmation.statuses.pending"), color: "bg-yellow-100 text-yellow-700", icon: Clock },
+    confirmed: { label: t("checkout.confirmation.statuses.confirmed"), color: "bg-blue-100 text-blue-700", icon: CheckCircle },
+    processing: { label: t("checkout.confirmation.statuses.processing"), color: "bg-orange-100 text-orange-700", icon: Package },
+    shipped: { label: t("checkout.confirmation.statuses.shipped"), color: "bg-indigo-100 text-indigo-700", icon: Truck },
+    delivered: { label: t("checkout.confirmation.statuses.delivered"), color: "bg-green-100 text-green-700", icon: CheckCircle },
+    cancelled: { label: t("checkout.tracking.cancelled_notice"), color: "bg-red-100 text-red-700", icon: XCircle },
+    refunded: { label: t("checkout.tracking.refunded_notice"), color: "bg-purple-100 text-purple-700", icon: RefreshCw },
   };
 
   const paymentMethodLabels: Record<string, string> = {
-    cod: "ক্যাশ অন ডেলিভারি",
-    bkash: "বিকাশ",
-    nagad: "নগদ",
-    uddoktapay: "অনলাইন পেমেন্ট",
+    cod: t("checkout.cod"),
+    bkash: "bKash",
+    nagad: "Nagad",
+    uddoktapay: t("checkout.online_payment"),
   };
 
   const handleTrack = async (searchValue?: string) => {
@@ -137,31 +139,31 @@ const OrderTracking = () => {
       }
 
       if (fetchError) {
-        setError("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+        setError(t("checkout.order_failed"));
         return;
       }
 
       if (!data) {
-        setError("অর্ডার পাওয়া যায়নি। সঠিক অর্ডার নম্বর বা ফোন নম্বর দিন।");
+        setError(t("checkout.tracking.not_found_desc"));
         return;
       }
 
       setOrder(data as OrderData);
     } catch (err) {
-      setError("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      setError(t("checkout.order_failed"));
     } finally {
       setLoading(false);
     }
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   const steps = [
-    { key: "pending", label: "অর্ডার করা", icon: Clock },
-    { key: "confirmed", label: "কনফার্ম", icon: CheckCircle },
-    { key: "processing", label: "প্রসেসিং", icon: Package },
-    { key: "shipped", label: "শিপিং", icon: Truck },
-    { key: "delivered", label: "ডেলিভারি", icon: MapPin },
+    { key: "pending", label: t("checkout.confirmation.statuses.pending"), icon: Clock },
+    { key: "confirmed", label: t("checkout.confirmation.statuses.confirmed"), icon: CheckCircle },
+    { key: "processing", label: t("checkout.confirmation.statuses.processing"), icon: Package },
+    { key: "shipped", label: t("checkout.confirmation.statuses.shipped"), icon: Truck },
+    { key: "delivered", label: t("checkout.confirmation.statuses.delivered"), icon: MapPin },
   ];
 
   return (
@@ -176,10 +178,10 @@ const OrderTracking = () => {
               <Package className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              অর্ডার ট্র্যাকিং
+              {t("checkout.tracking.title")}
             </h1>
             <p className="text-muted-foreground">
-              আপনার অর্ডার নম্বর বা ফোন নম্বর দিয়ে অর্ডারের অবস্থা দেখুন
+              {t("checkout.tracking.subtitle")}
             </p>
           </div>
 
@@ -190,7 +192,7 @@ const OrderTracking = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                    placeholder="অর্ডার নম্বর বা ফোন নম্বর (যেমন: #10001 বা 01712345678)"
+                    placeholder={t("checkout.tracking.input_placeholder")}
                     className="pl-11 h-12 text-base"
                     value={trackingInput}
                     onChange={(e) => setTrackingInput(e.target.value)}
@@ -201,17 +203,17 @@ const OrderTracking = () => {
                   {loading ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      খোঁজা হচ্ছে...
+                      {t("checkout.tracking.searching")}
                     </>
                   ) : (
                     <>
                       <Search className="h-4 w-4 mr-2" />
-                      ট্র্যাক করুন
+                      {t("checkout.tracking.track_button")}
                     </>
                   )}
                 </Button>
               </div>
-              
+
               {error && (
                 <div className="flex items-center gap-2 text-destructive text-sm mt-4 p-3 bg-destructive/10 rounded-lg">
                   <AlertCircle className="h-4 w-4" />
@@ -226,12 +228,12 @@ const OrderTracking = () => {
             <Card className="text-center py-12">
               <CardContent>
                 <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">কোনো অর্ডার পাওয়া যায়নি</h3>
+                <h3 className="text-lg font-medium mb-2">{t("checkout.tracking.not_found_title")}</h3>
                 <p className="text-muted-foreground mb-4">
-                  দয়া করে সঠিক অর্ডার নম্বর বা ফোন নম্বর দিয়ে আবার চেষ্টা করুন
+                  {t("checkout.tracking.not_found_desc")}
                 </p>
                 <Link to="/contact">
-                  <Button variant="outline">সাহায্যের জন্য যোগাযোগ করুন</Button>
+                  <Button variant="outline">{t("checkout.tracking.contact_support")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -249,7 +251,9 @@ const OrderTracking = () => {
                       <p className="text-2xl font-bold text-primary font-mono">{order.order_number}</p>
                       <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {format(new Date(order.created_at), "dd MMMM, yyyy - hh:mm a", { locale: bn })}
+                        {i18n.language === "bn"
+                          ? format(new Date(order.created_at), "dd MMMM, yyyy - hh:mm a", { locale: bn })
+                          : format(new Date(order.created_at), "dd MMMM, yyyy - hh:mm a")}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -257,8 +261,7 @@ const OrderTracking = () => {
                         {statusConfig[order.order_status]?.label || order.order_status}
                       </Badge>
                       <Badge variant={order.payment_status === "paid" ? "default" : "secondary"}>
-                        {order.payment_status === "paid" ? "পরিশোধিত" : 
-                         order.payment_status === "partial" ? "আংশিক" : "বকেয়া"}
+                        {t(`checkout.confirmation.payment_statuses.${order.payment_status}` as any)}
                       </Badge>
                     </div>
                   </div>
@@ -269,17 +272,17 @@ const OrderTracking = () => {
               {order.order_status !== "cancelled" && order.order_status !== "refunded" && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">অর্ডার স্ট্যাটাস</CardTitle>
+                    <CardTitle className="text-lg">{t("checkout.confirmation.order_status")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="relative">
                       {/* Progress Line */}
                       <div className="absolute top-5 left-5 right-5 h-0.5 bg-muted hidden md:block" />
-                      <div 
-                        className="absolute top-5 left-5 h-0.5 bg-primary hidden md:block transition-all duration-500" 
-                        style={{ width: `${Math.max(0, (getStatusStep(order.order_status) / 4) * 100)}%` }} 
+                      <div
+                        className="absolute top-5 left-5 h-0.5 bg-primary hidden md:block transition-all duration-500"
+                        style={{ width: `${Math.max(0, (getStatusStep(order.order_status) / 4) * 100)}%` }}
                       />
-                      
+
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-0">
                         {steps.map((step, idx) => {
                           const currentStep = getStatusStep(order.order_status);
@@ -290,11 +293,10 @@ const OrderTracking = () => {
                           return (
                             <div key={step.key} className="flex md:flex-col items-center gap-3 md:gap-2 relative z-10">
                               <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                                  isCompleted
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-muted text-muted-foreground"
-                                } ${isCurrent ? "ring-4 ring-primary/20 scale-110" : ""}`}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${isCompleted
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground"
+                                  } ${isCurrent ? "ring-4 ring-primary/20 scale-110" : ""}`}
                               >
                                 <Icon className="h-5 w-5" />
                               </div>
@@ -303,7 +305,7 @@ const OrderTracking = () => {
                                   {step.label}
                                 </span>
                                 {isCurrent && (
-                                  <p className="text-xs text-muted-foreground">বর্তমান অবস্থা</p>
+                                  <p className="text-xs text-muted-foreground">{t("checkout.tracking.current_status")}</p>
                                 )}
                               </div>
                             </div>
@@ -319,9 +321,9 @@ const OrderTracking = () => {
                           <div className="flex items-center gap-3">
                             <Truck className="h-5 w-5 text-blue-600" />
                             <div>
-                              <p className="font-medium text-blue-900 dark:text-blue-100">Steadfast Courier</p>
+                              <p className="font-medium text-blue-900 dark:text-blue-100">{t("checkout.tracking.steadfast_title")}</p>
                               <p className="text-sm text-blue-700 dark:text-blue-300">
-                                ট্র্যাকিং কোড: <span className="font-mono">{order.steadfast_tracking_code}</span>
+                                {t("checkout.tracking.tracking_code")}: <span className="font-mono">{order.steadfast_tracking_code}</span>
                               </p>
                             </div>
                           </div>
@@ -332,7 +334,7 @@ const OrderTracking = () => {
                           >
                             <Button variant="outline" size="sm" className="gap-2 border-blue-300 text-blue-700 hover:bg-blue-100">
                               <ExternalLink className="h-4 w-4" />
-                              কুরিয়ার ট্র্যাক
+                              {t("checkout.tracking.track_courier")}
                             </Button>
                           </a>
                         </div>
@@ -350,10 +352,10 @@ const OrderTracking = () => {
                       <XCircle className="h-6 w-6" />
                       <div>
                         <p className="font-semibold">
-                          {order.order_status === "cancelled" ? "এই অর্ডার বাতিল করা হয়েছে" : "এই অর্ডার রিফান্ড করা হয়েছে"}
+                          {order.order_status === "cancelled" ? t("checkout.tracking.cancelled_notice") : t("checkout.tracking.refunded_notice")}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          যেকোনো প্রশ্নের জন্য আমাদের সাথে যোগাযোগ করুন
+                          {t("checkout.confirmation.contact_info")}
                         </p>
                       </div>
                     </div>
@@ -367,7 +369,7 @@ const OrderTracking = () => {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <MapPin className="h-5 w-5 text-primary" />
-                      ডেলিভারি তথ্য
+                      {t("checkout.confirmation.delivery_address")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -385,7 +387,7 @@ const OrderTracking = () => {
                     </div>
                     <Separator />
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">পেমেন্ট মেথড</span>
+                      <span className="text-muted-foreground">{t("checkout.confirmation.payment_method")}</span>
                       <span className="flex items-center gap-1">
                         <CreditCard className="h-4 w-4" />
                         {paymentMethodLabels[order.payment_method] || order.payment_method}
@@ -399,7 +401,7 @@ const OrderTracking = () => {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Package className="h-5 w-5 text-primary" />
-                      অর্ডার সামারি
+                      {t("checkout.tracking.order_summary")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -421,22 +423,22 @@ const OrderTracking = () => {
 
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">সাবটোটাল</span>
+                          <span className="text-muted-foreground">{t("cart.subtotal")}</span>
                           <span>{formatPrice(order.subtotal)}</span>
                         </div>
                         {order.discount_amount && order.discount_amount > 0 && (
                           <div className="flex justify-between text-green-600">
-                            <span>ডিসকাউন্ট</span>
+                            <span>{t("checkout.coupon_discount")}</span>
                             <span>-{formatPrice(order.discount_amount)}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">ডেলিভারি</span>
+                          <span className="text-muted-foreground">{t("checkout.delivery_charge")}</span>
                           <span>{formatPrice(order.delivery_charge || 0)}</span>
                         </div>
                         <Separator />
                         <div className="flex justify-between font-bold text-lg">
-                          <span>মোট</span>
+                          <span>{t("cart.total")}</span>
                           <span className="text-primary">{formatPrice(order.total_amount)}</span>
                         </div>
                       </div>
@@ -450,20 +452,20 @@ const OrderTracking = () => {
                 <CardContent className="py-6">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-muted-foreground text-center sm:text-left">
-                      সমস্যায় কল করুন: <strong>+880 1XXX-XXXXXX</strong>
+                      {t("checkout.tracking.contact_help")} <strong>+880 1XXX-XXXXXX</strong>
                     </p>
                     <div className="flex gap-3">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         onClick={() => downloadInvoice(order.order_number)}
                         className="gap-2"
                       >
                         <Download className="h-4 w-4" />
-                        ইনভয়েস
+                        {t("checkout.confirmation.invoice")}
                       </Button>
                       <Link to="/shop">
                         <Button className="gap-2">
-                          আরো কেনাকাটা
+                          {t("checkout.confirmation.more_shopping")}
                         </Button>
                       </Link>
                     </div>
@@ -478,7 +480,7 @@ const OrderTracking = () => {
             <div className="text-center mt-8">
               <Link to="/" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                হোম পেজে ফিরে যান
+                {t("checkout.tracking.back_home")}
               </Link>
             </div>
           )}

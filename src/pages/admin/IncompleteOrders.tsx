@@ -32,7 +32,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format, formatDistanceToNow } from "date-fns";
-import { bn } from "date-fns/locale";
+import { bn, enUS } from "date-fns/locale";
 import { OrderDialog } from "@/components/admin/dialogs/OrderDialog";
 
 interface CartItem {
@@ -80,7 +80,7 @@ const AdminIncompleteOrders = () => {
 
   const fetchOrders = async () => {
     setLoading(true);
-    
+
     // Fetch all incomplete orders for stats
     const { data: allData, error: allError } = await supabase
       .from("incomplete_orders")
@@ -88,7 +88,7 @@ const AdminIncompleteOrders = () => {
       .order("last_updated_at", { ascending: false });
 
     if (allError) {
-      toast({ title: "ডাটা লোড করতে সমস্যা হয়েছে", variant: "destructive" });
+      toast({ title: "Failed to load data", variant: "destructive" });
     } else {
       setAllOrders((allData as unknown as IncompleteOrder[]) || []);
       // Filter out converted orders for display
@@ -118,15 +118,15 @@ const AdminIncompleteOrders = () => {
   const deleteOrder = async (id: string) => {
     const { error } = await supabase.from("incomplete_orders").delete().eq("id", id);
     if (error) {
-      toast({ title: "ডিলিট করতে সমস্যা হয়েছে", variant: "destructive" });
+      toast({ title: "Failed to delete", variant: "destructive" });
     } else {
-      toast({ title: "সফলভাবে ডিলিট হয়েছে" });
+      toast({ title: "Deleted successfully" });
       setOrders((prev) => prev.filter((o) => o.id !== id));
       setAllOrders((prev) => prev.filter((o) => o.id !== id));
     }
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString("en-US")}`;
 
   const getCartTotal = (cartData: CartItem[] | null) => {
     if (!cartData || cartData.length === 0) return 0;
@@ -150,8 +150,8 @@ const AdminIncompleteOrders = () => {
     total: allOrders.length,
     converted: allOrders.filter(o => o.is_converted).length,
     pending: allOrders.filter(o => !o.is_converted).length,
-    conversionRate: allOrders.length > 0 
-      ? Math.round((allOrders.filter(o => o.is_converted).length / allOrders.length) * 100) 
+    conversionRate: allOrders.length > 0
+      ? Math.round((allOrders.filter(o => o.is_converted).length / allOrders.length) * 100)
       : 0,
     recoveredRevenue: allOrders
       .filter(o => o.is_converted)
@@ -177,19 +177,19 @@ const AdminIncompleteOrders = () => {
   const handleOrderConverted = useCallback((incompleteOrderId: string, newOrderId: string) => {
     // Optimistically remove from the orders list
     setOrders(prev => prev.filter(o => o.id !== incompleteOrderId));
-    
+
     // Update allOrders to reflect the conversion for stats
-    setAllOrders(prev => prev.map(o => 
-      o.id === incompleteOrderId 
+    setAllOrders(prev => prev.map(o =>
+      o.id === incompleteOrderId
         ? { ...o, is_converted: true, converted_order_id: newOrderId }
         : o
     ));
-    
+
     toast({
-      title: "অর্ডার সফলভাবে রূপান্তরিত",
-      description: "অর্ডার লিস্টে দেখুন",
+      title: "Order successfully converted",
+      description: "You can view it in the order list",
     });
-    
+
     // Close dialog
     setConvertDialogOpen(false);
     setOrderToConvert(null);
@@ -198,7 +198,7 @@ const AdminIncompleteOrders = () => {
   // Create pre-filled order data for conversion
   const getConversionOrderData = (incompleteOrder: IncompleteOrder) => {
     if (!incompleteOrder) return null;
-    
+
     // Transform cart_data to order items format
     const orderItems = incompleteOrder.cart_data?.map(item => ({
       product_id: item.productId,
@@ -228,14 +228,14 @@ const AdminIncompleteOrders = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">অসম্পূর্ণ অর্ডার</h1>
+          <h1 className="text-2xl font-bold text-foreground">Incomplete Orders</h1>
           <p className="text-muted-foreground">
-            রিয়েল-টাইম চেকআউট ট্র্যাকিং ও রিকভারি
+            Real-time checkout tracking & recovery
           </p>
         </div>
         <Button variant="outline" onClick={fetchOrders} disabled={loading}>
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-          রিফ্রেশ
+          Refresh
         </Button>
       </div>
 
@@ -249,7 +249,7 @@ const AdminIncompleteOrders = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{recoveryStats.pending}</p>
-                <p className="text-sm text-muted-foreground">অসম্পূর্ণ অর্ডার</p>
+                <p className="text-sm text-muted-foreground">Incomplete Orders</p>
               </div>
             </div>
           </CardContent>
@@ -262,7 +262,7 @@ const AdminIncompleteOrders = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{recoveryStats.converted}</p>
-                <p className="text-sm text-muted-foreground">রূপান্তরিত অর্ডার</p>
+                <p className="text-sm text-muted-foreground">Converted Orders</p>
               </div>
             </div>
           </CardContent>
@@ -275,7 +275,7 @@ const AdminIncompleteOrders = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{recoveryStats.conversionRate}%</p>
-                <p className="text-sm text-muted-foreground">রূপান্তর হার</p>
+                <p className="text-sm text-muted-foreground">Conversion Rate</p>
               </div>
             </div>
           </CardContent>
@@ -288,7 +288,7 @@ const AdminIncompleteOrders = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{formatPrice(recoveryStats.recoveredRevenue)}</p>
-                <p className="text-sm text-muted-foreground">উদ্ধারকৃত বিক্রি</p>
+                <p className="text-sm text-muted-foreground">Recovered Revenue</p>
               </div>
             </div>
           </CardContent>
@@ -300,12 +300,12 @@ const AdminIncompleteOrders = () => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">সম্ভাব্য বিক্রি (অসম্পূর্ণ)</p>
+              <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">Potential Revenue (Incomplete)</p>
               <p className="text-3xl font-bold text-orange-700 dark:text-orange-300">{formatPrice(recoveryStats.potentialRevenue)}</p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">ফোন নম্বর আছে</p>
-              <p className="text-lg font-semibold">{orders.filter(o => o.customer_phone).length} টি</p>
+              <p className="text-sm text-muted-foreground">Has phone number</p>
+              <p className="text-lg font-semibold">{orders.filter(o => o.customer_phone).length} items</p>
             </div>
           </div>
         </CardContent>
@@ -314,27 +314,27 @@ const AdminIncompleteOrders = () => {
       {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle>অসম্পূর্ণ চেকআউট লিস্ট</CardTitle>
+          <CardTitle>Incomplete Checkout List</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-muted-foreground">লোড হচ্ছে...</div>
+            <div className="text-center py-8 text-muted-foreground">Loading...</div>
           ) : orders.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              কোনো অসম্পূর্ণ অর্ডার নেই
+              No incomplete orders found
             </div>
           ) : (
             <ScrollArea className="h-[500px]">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>কাস্টমার</TableHead>
-                    <TableHead>ফোন</TableHead>
-                    <TableHead>ঠিকানা</TableHead>
-                    <TableHead>কার্ট মূল্য</TableHead>
-                    <TableHead>সম্পূর্ণতা</TableHead>
-                    <TableHead>সময়</TableHead>
-                    <TableHead className="text-right">অ্যাকশন</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>Cart Value</TableHead>
+                    <TableHead>Completion</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -374,7 +374,7 @@ const AdminIncompleteOrders = () => {
                               {formatPrice(getCartTotal(order.cart_data))}
                             </span>
                             <p className="text-xs text-muted-foreground">
-                              {order.cart_data.length} টি পণ্য
+                              {order.cart_data.length} items
                             </p>
                           </div>
                         ) : (
@@ -397,7 +397,7 @@ const AdminIncompleteOrders = () => {
                           <Clock className="h-3 w-3" />
                           {formatDistanceToNow(new Date(order.last_updated_at), {
                             addSuffix: true,
-                            locale: bn,
+                            locale: enUS,
                           })}
                         </div>
                       </TableCell>
@@ -409,10 +409,10 @@ const AdminIncompleteOrders = () => {
                             size="sm"
                             className="gap-1"
                             onClick={() => handleConvertToOrder(order)}
-                            title="অর্ডারে রূপান্তর করুন"
+                            title="Convert to Order"
                           >
                             <ArrowRightLeft className="h-4 w-4" />
-                            অর্ডার করুন
+                            Order
                           </Button>
                           <Button
                             variant="ghost"
@@ -429,15 +429,15 @@ const AdminIncompleteOrders = () => {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>ডিলিট করতে চান?</AlertDialogTitle>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  এই অসম্পূর্ণ অর্ডার ডিলিট করা হবে।
+                                  This incomplete order will be deleted.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>না</AlertDialogCancel>
+                                <AlertDialogCancel>No</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => deleteOrder(order.id)}>
-                                  হ্যাঁ, ডিলিট করুন
+                                  Yes, delete
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -457,39 +457,39 @@ const AdminIncompleteOrders = () => {
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>অসম্পূর্ণ অর্ডার বিস্তারিত</DialogTitle>
+            <DialogTitle>Incomplete Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">নাম</p>
+                  <p className="text-sm text-muted-foreground">Name</p>
                   <p className="font-medium">{selectedOrder.customer_name || "—"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">ফোন</p>
+                  <p className="text-sm text-muted-foreground">Phone</p>
                   <p className="font-medium">{selectedOrder.customer_phone || "—"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">ইমেইল</p>
+                  <p className="text-sm text-muted-foreground">Email</p>
                   <p className="font-medium">{selectedOrder.customer_email || "—"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">শহর</p>
+                  <p className="text-sm text-muted-foreground">City</p>
                   <p className="font-medium">{selectedOrder.shipping_city || "—"}</p>
                 </div>
               </div>
 
               {selectedOrder.shipping_address && (
                 <div>
-                  <p className="text-sm text-muted-foreground">ঠিকানা</p>
+                  <p className="text-sm text-muted-foreground">Address</p>
                   <p className="font-medium">{selectedOrder.shipping_address}</p>
                 </div>
               )}
 
               {selectedOrder.cart_data && selectedOrder.cart_data.length > 0 && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">কার্টের পণ্য</p>
+                  <p className="text-sm text-muted-foreground mb-2">Cart Items</p>
                   <div className="space-y-2">
                     {selectedOrder.cart_data.map((item, idx) => (
                       <div
@@ -515,7 +515,7 @@ const AdminIncompleteOrders = () => {
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 border-t">
-                      <span className="font-bold">মোট:</span>
+                      <span className="font-bold">Total:</span>
                       <span className="font-bold text-primary">
                         {formatPrice(getCartTotal(selectedOrder.cart_data))}
                       </span>
@@ -526,13 +526,13 @@ const AdminIncompleteOrders = () => {
 
               <div className="flex justify-between items-center pt-4 border-t">
                 <div className="text-xs text-muted-foreground">
-                  সর্বশেষ আপডেট:{" "}
+                  Last updated:{" "}
                   {format(new Date(selectedOrder.last_updated_at), "dd MMM yyyy, hh:mm a", {
-                    locale: bn,
+                    locale: enUS,
                   })}
                 </div>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={() => {
                     setSelectedOrder(null);
                     handleConvertToOrder(selectedOrder);
@@ -540,7 +540,7 @@ const AdminIncompleteOrders = () => {
                   className="gap-1"
                 >
                   <ArrowRightLeft className="h-4 w-4" />
-                  অর্ডারে রূপান্তর করুন
+                  Convert to Order
                 </Button>
               </div>
             </div>

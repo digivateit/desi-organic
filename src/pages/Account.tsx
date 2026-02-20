@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Package, User, MapPin, LogOut, ChevronRight, Clock, Truck, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const Account = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, isLoading, signOut, isAdmin } = useAuth();
   const { getItemCount } = useCart();
@@ -44,12 +46,12 @@ const Account = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-      pending: { label: "পেন্ডিং", variant: "outline" },
-      confirmed: { label: "কনফার্মড", variant: "secondary" },
-      processing: { label: "প্রসেসিং", variant: "secondary" },
-      shipped: { label: "শিপ করা হয়েছে", variant: "default" },
-      delivered: { label: "ডেলিভার হয়েছে", variant: "default" },
-      cancelled: { label: "বাতিল", variant: "destructive" },
+      pending: { label: t("checkout.confirmation.statuses.pending"), variant: "outline" },
+      confirmed: { label: t("checkout.confirmation.statuses.confirmed"), variant: "secondary" },
+      processing: { label: t("checkout.confirmation.statuses.processing"), variant: "secondary" },
+      shipped: { label: t("checkout.confirmation.statuses.shipped"), variant: "default" },
+      delivered: { label: t("checkout.confirmation.statuses.delivered"), variant: "default" },
+      cancelled: { label: t("checkout.tracking.cancelled_notice"), variant: "destructive" },
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -67,7 +69,7 @@ const Account = () => {
     }
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("bn-BD")}`;
+  const formatPrice = (price: number) => `৳${price.toLocaleString(i18n.language === "bn" ? "bn-BD" : "en-US")}`;
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -78,7 +80,7 @@ const Account = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>লোড হচ্ছে...</p>
+        <p>{t("account.loading")}</p>
       </div>
     );
   }
@@ -97,13 +99,13 @@ const Account = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                আমার একাউন্ট
+                {t("account.title")}
               </h1>
               <p className="text-muted-foreground">{user.email}</p>
             </div>
             {isAdmin && (
               <Link to="/admin">
-                <Button variant="outline">অ্যাডমিন প্যানেল</Button>
+                <Button variant="outline">{t("account.admin_panel")}</Button>
               </Link>
             )}
           </div>
@@ -115,21 +117,21 @@ const Account = () => {
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 <Package className="h-4 w-4 mr-2" />
-                অর্ডার
+                {t("account.tabs.orders")}
               </TabsTrigger>
               <TabsTrigger
                 value="profile"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 <User className="h-4 w-4 mr-2" />
-                প্রোফাইল
+                {t("account.tabs.profile")}
               </TabsTrigger>
               <TabsTrigger
                 value="addresses"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 <MapPin className="h-4 w-4 mr-2" />
-                ঠিকানা
+                {t("account.tabs.addresses")}
               </TabsTrigger>
             </TabsList>
 
@@ -139,13 +141,13 @@ const Account = () => {
                 <div className="text-center py-12">
                   <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <h2 className="text-xl font-semibold text-foreground mb-2">
-                    কোনো অর্ডার নেই
+                    {t("account.no_orders")}
                   </h2>
                   <p className="text-muted-foreground mb-4">
-                    আপনি এখনো কোনো অর্ডার করেননি
+                    {t("account.no_orders_desc")}
                   </p>
                   <Link to="/products">
-                    <Button>কেনাকাটা শুরু করুন</Button>
+                    <Button>{t("account.start_shopping")}</Button>
                   </Link>
                 </div>
               ) : (
@@ -165,7 +167,7 @@ const Account = () => {
                               {order.order_number}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {order.created_at} • {order.items_count}টি পণ্য
+                              {order.created_at} • {t("account.items_count", { count: order.items_count })}
                             </p>
                             <div className="mt-2">
                               {getStatusBadge(order.order_status)}
@@ -178,7 +180,7 @@ const Account = () => {
                             {formatPrice(order.total_amount)}
                           </p>
                           <Button variant="ghost" size="sm" className="gap-1">
-                            বিস্তারিত দেখুন
+                            {t("account.order_details")}
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </div>
@@ -193,17 +195,19 @@ const Account = () => {
             <TabsContent value="profile">
               <div className="bg-card rounded-xl p-6 border border-border max-w-xl">
                 <h2 className="text-lg font-bold text-foreground mb-6">
-                  প্রোফাইল তথ্য
+                  {t("account.profile_info")}
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm text-muted-foreground">ইমেইল</label>
+                    <label className="text-sm text-muted-foreground">{t("account.email")}</label>
                     <p className="font-medium text-foreground">{user.email}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground">একাউন্ট তৈরি</label>
+                    <label className="text-sm text-muted-foreground">{t("account.account_created")}</label>
                     <p className="font-medium text-foreground">
-                      {new Date(user.created_at).toLocaleDateString("bn-BD")}
+                      {i18n.language === "bn"
+                        ? new Date(user.created_at).toLocaleDateString("bn-BD")
+                        : new Date(user.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -218,7 +222,7 @@ const Account = () => {
                     className="gap-2"
                   >
                     <LogOut className="h-4 w-4" />
-                    লগআউট করুন
+                    {t("account.logout")}
                   </Button>
                 </div>
               </div>
@@ -228,14 +232,14 @@ const Account = () => {
             <TabsContent value="addresses">
               <div className="bg-card rounded-xl p-6 border border-border max-w-xl">
                 <h2 className="text-lg font-bold text-foreground mb-6">
-                  সংরক্ষিত ঠিকানা
+                  {t("account.saved_addresses")}
                 </h2>
                 <div className="text-center py-8">
                   <MapPin className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    কোনো ঠিকানা সংরক্ষিত নেই
+                    {t("account.no_addresses")}
                   </p>
-                  <Button className="mt-4">নতুন ঠিকানা যোগ করুন</Button>
+                  <Button className="mt-4">{t("account.add_address")}</Button>
                 </div>
               </div>
             </TabsContent>

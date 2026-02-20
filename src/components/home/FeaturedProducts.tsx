@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./ProductCard";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const FeaturedProducts = () => {
+  const { t } = useTranslation();
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['featured-products'],
     queryFn: async () => {
@@ -16,7 +18,7 @@ const FeaturedProducts = () => {
         .eq('is_active', true)
         .eq('is_featured', true)
         .limit(4);
-      
+
       if (error) throw error;
       return data;
     },
@@ -60,15 +62,15 @@ const FeaturedProducts = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              বিশেষ পণ্যসমূহ
+              {t("products.featured_title")}
             </h2>
             <p className="text-muted-foreground mt-1">
-              আমাদের সেরা মানের অর্গানিক পণ্য
+              {t("products.featured_subtitle")}
             </p>
           </div>
           <Link to="/shop?featured=true">
             <Button variant="outline" className="hidden sm:flex items-center gap-2">
-              সব দেখুন
+              {t("products.view_all")}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -79,6 +81,7 @@ const FeaturedProducts = () => {
             <ProductCard
               key={product.id}
               id={product.id}
+              name={product.name}
               name_bn={product.name_bn}
               slug={product.slug}
               image_url={product.images?.[0] || ''}
@@ -93,7 +96,7 @@ const FeaturedProducts = () => {
         <div className="mt-6 text-center sm:hidden">
           <Link to="/shop?featured=true">
             <Button variant="outline" className="w-full">
-              সব দেখুন
+              {t("products.view_all")}
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </Link>

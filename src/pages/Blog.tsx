@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Calendar, User, ArrowRight, BookOpen, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/layout/Header";
@@ -7,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useBlogPosts } from "@/hooks/useCMSData";
 
 const Blog = () => {
+  const { t, i18n } = useTranslation();
   const { getItemCount } = useCart();
   const { data: blogPosts, isLoading } = useBlogPosts(true); // Only published
 
@@ -21,10 +23,10 @@ const Blog = () => {
               <BookOpen className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              ব্লগ
+              {t("blog.title")}
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              স্বাস্থ্যকর জীবনযাপন ও অর্গানিক খাবার সম্পর্কে জানুন
+              {t("blog.subtitle")}
             </p>
           </div>
 
@@ -42,7 +44,7 @@ const Blog = () => {
                   <div className="aspect-video overflow-hidden">
                     <img
                       src={post.image_url || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=400&fit=crop"}
-                      alt={post.title}
+                      alt={i18n.language === "bn" ? post.title_bn || post.title : post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
@@ -50,28 +52,30 @@ const Blog = () => {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        {post.published_at 
-                          ? new Date(post.published_at).toLocaleDateString("bn-BD")
-                          : new Date(post.created_at).toLocaleDateString("bn-BD")
+                        {post.published_at
+                          ? new Date(post.published_at).toLocaleDateString(i18n.language === "bn" ? "bn-BD" : "en-US")
+                          : new Date(post.created_at).toLocaleDateString(i18n.language === "bn" ? "bn-BD" : "en-US")
                         }
                       </span>
                       <span className="flex items-center gap-1">
                         <User className="h-4 w-4" />
-                        {post.author || "অর্গানিক স্টোর"}
+                        {i18n.language === "bn" ? (post.author_bn || post.author || t("blog.author_default")) : (post.author || post.author_bn || t("blog.author_default"))}
                       </span>
                     </div>
                     {post.category && (
                       <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded-full mb-3">
-                        {post.category}
+                        {i18n.language === "bn" ? post.category_bn || post.category : post.category}
                       </span>
                     )}
                     <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {post.title}
+                      {i18n.language === "bn" ? post.title_bn || post.title : post.title}
                     </h2>
-                    <p className="text-muted-foreground mb-4 line-clamp-2">{post.excerpt}</p>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
+                      {i18n.language === "bn" ? post.excerpt_bn || post.excerpt : post.excerpt}
+                    </p>
                     <Link to={`/blog/${post.slug || post.id}`}>
                       <Button variant="link" className="p-0 h-auto gap-2">
-                        আরো পড়ুন
+                        {t("blog.read_more")}
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </Link>
@@ -82,7 +86,7 @@ const Blog = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                কোন ব্লগ পোস্ট নেই। শীঘ্রই আসছে...
+                {t("blog.no_posts")}
               </p>
             </div>
           )}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,26 +12,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
-const loginSchema = z.object({
-  email: z.string().email("সঠিক ইমেইল দিন"),
-  password: z.string().min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে"),
+const getLoginSchema = (t: any) => z.object({
+  email: z.string().email(t("auth.errors.email_invalid")),
+  password: z.string().min(6, t("auth.errors.password_min")),
 });
 
-const signupSchema = z.object({
-  fullName: z.string().min(2, "নাম দিন"),
-  phone: z.string().min(11, "সঠিক ফোন নম্বর দিন"),
-  email: z.string().email("সঠিক ইমেইল দিন"),
-  password: z.string().min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে"),
+const getSignupSchema = (t: any) => z.object({
+  fullName: z.string().min(2, t("auth.errors.name_required")),
+  phone: z.string().min(11, t("auth.errors.phone_invalid")),
+  email: z.string().email(t("auth.errors.email_invalid")),
+  password: z.string().min(6, t("auth.errors.password_min")),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "পাসওয়ার্ড মিলছে না",
+  message: t("auth.passwords_dont_match"),
   path: ["confirmPassword"],
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
-type SignupFormData = z.infer<typeof signupSchema>;
+type LoginFormData = z.infer<ReturnType<typeof getLoginSchema>>;
+type SignupFormData = z.infer<ReturnType<typeof getSignupSchema>>;
 
 const Auth = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
@@ -44,11 +46,11 @@ const Auth = () => {
   }
 
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(getLoginSchema(t)),
   });
 
   const signupForm = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(getSignupSchema(t)),
   });
 
   const handleLogin = async (data: LoginFormData) => {
@@ -57,16 +59,16 @@ const Auth = () => {
       const { error } = await signIn(data.email, data.password);
       if (error) {
         toast({
-          title: "লগইন ব্যর্থ",
+          title: t("auth.login_failed"),
           description: error.message === "Invalid login credentials"
-            ? "ইমেইল বা পাসওয়ার্ড ভুল"
+            ? t("auth.invalid_credentials")
             : error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "স্বাগতম!",
-          description: "সফলভাবে লগইন হয়েছে",
+          title: t("auth.welcome"),
+          description: t("auth.login_success"),
         });
         navigate("/account");
       }
@@ -82,17 +84,17 @@ const Auth = () => {
       if (error) {
         let message = error.message;
         if (error.message.includes("already registered")) {
-          message = "এই ইমেইল দিয়ে আগেই একাউন্ট আছে";
+          message = t("auth.already_registered");
         }
         toast({
-          title: "সাইনআপ ব্যর্থ",
+          title: t("auth.signup_failed"),
           description: message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "একাউন্ট তৈরি হয়েছে!",
-          description: "অনুগ্রহ করে আপনার ইমেইল ভেরিফাই করুন",
+          title: t("auth.signup_success"),
+          description: t("auth.verify_email"),
         });
         navigate("/account");
       }
@@ -110,8 +112,8 @@ const Auth = () => {
             <Leaf className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-primary">অর্গানিক স্টোর</h1>
-            <p className="text-xs text-muted-foreground">প্রকৃতির স্পর্শে স্বাস্থ্যকর জীবন</p>
+            <h1 className="text-xl font-bold text-primary">{t("auth.title")}</h1>
+            <p className="text-xs text-muted-foreground">{t("auth.subtitle")}</p>
           </div>
         </Link>
 
@@ -119,15 +121,15 @@ const Auth = () => {
         <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-card">
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">লগইন</TabsTrigger>
-              <TabsTrigger value="signup">সাইনআপ</TabsTrigger>
+              <TabsTrigger value="login">{t("auth.login")}</TabsTrigger>
+              <TabsTrigger value="signup">{t("auth.signup")}</TabsTrigger>
             </TabsList>
 
             {/* Login Tab */}
             <TabsContent value="login">
               <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">ইমেইল</Label>
+                  <Label htmlFor="login-email">{t("auth.email")}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -146,7 +148,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">পাসওয়ার্ড</Label>
+                  <Label htmlFor="login-password">{t("auth.password")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -172,7 +174,7 @@ const Auth = () => {
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "প্রসেসিং..." : "লগইন করুন"}
+                  {isLoading ? t("auth.processing") : t("auth.login_button")}
                 </Button>
               </form>
             </TabsContent>
@@ -181,12 +183,12 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">নাম</Label>
+                  <Label htmlFor="signup-name">{t("auth.name")}</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="signup-name"
-                      placeholder="আপনার নাম"
+                      placeholder={t("auth.name_placeholder")}
                       className="pl-10"
                       {...signupForm.register("fullName")}
                     />
@@ -199,12 +201,12 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-phone">ফোন নম্বর</Label>
+                  <Label htmlFor="signup-phone">{t("auth.phone")}</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="signup-phone"
-                      placeholder="০১XXXXXXXXX"
+                      placeholder={t("auth.phone_placeholder")}
                       className="pl-10"
                       {...signupForm.register("phone")}
                     />
@@ -217,7 +219,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">ইমেইল</Label>
+                  <Label htmlFor="signup-email">{t("auth.email")}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -236,7 +238,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">পাসওয়ার্ড</Label>
+                  <Label htmlFor="signup-password">{t("auth.password")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -262,7 +264,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-confirm">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                  <Label htmlFor="signup-confirm">{t("auth.confirm_password")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -281,7 +283,7 @@ const Auth = () => {
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "প্রসেসিং..." : "একাউন্ট তৈরি করুন"}
+                  {isLoading ? t("auth.processing") : t("auth.signup_button")}
                 </Button>
               </form>
             </TabsContent>
@@ -291,7 +293,7 @@ const Auth = () => {
         {/* Back to Home */}
         <p className="text-center mt-6 text-sm text-muted-foreground">
           <Link to="/" className="text-primary hover:underline">
-            ← হোম পেজে ফিরে যান
+            ← {t("auth.back_home")}
           </Link>
         </p>
       </div>

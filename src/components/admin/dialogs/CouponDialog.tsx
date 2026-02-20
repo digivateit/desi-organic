@@ -85,16 +85,16 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
       if (coupon) {
         const { error } = await supabase.from("coupons").update(data).eq("id", coupon.id);
         if (error) throw error;
-        toast.success("কুপন আপডেট হয়েছে");
+        toast.success("Coupon updated");
       } else {
         const { error } = await supabase.from("coupons").insert(data);
         if (error) throw error;
-        toast.success("কুপন যোগ হয়েছে");
+        toast.success("Coupon added");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-coupons"] });
       onOpenChange(false);
     } catch (error) {
-      toast.error("কিছু সমস্যা হয়েছে");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -104,11 +104,11 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{coupon ? "কুপন এডিট করুন" : "নতুন কুপন"}</DialogTitle>
+          <DialogTitle>{coupon ? "Edit Coupon" : "New Coupon"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>কুপন কোড</Label>
+            <Label>Coupon Code</Label>
             <Input
               value={form.code}
               onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
@@ -117,19 +117,19 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>ডিসকাউন্ট টাইপ</Label>
+              <Label>Discount Type</Label>
               <Select value={form.discount_type} onValueChange={(v) => setForm({ ...form, discount_type: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="percentage">শতাংশ (%)</SelectItem>
-                  <SelectItem value="fixed">নির্দিষ্ট পরিমাণ (৳)</SelectItem>
+                  <SelectItem value="percentage">Percentage (%)</SelectItem>
+                  <SelectItem value="fixed">Fixed Amount (৳)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>ডিসকাউন্ট মান</Label>
+              <Label>Discount Value</Label>
               <Input
                 type="number"
                 value={form.discount_value}
@@ -140,7 +140,7 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>মিনিমাম অর্ডার (৳)</Label>
+              <Label>Minimum Order (৳)</Label>
               <Input
                 type="number"
                 value={form.min_order_amount}
@@ -148,7 +148,7 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
               />
             </div>
             <div className="space-y-2">
-              <Label>সর্বোচ্চ ডিসকাউন্ট (৳)</Label>
+              <Label>Maximum Discount (৳)</Label>
               <Input
                 type="number"
                 value={form.max_discount}
@@ -158,7 +158,7 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>ব্যবহার সীমা</Label>
+              <Label>Usage Limit</Label>
               <Input
                 type="number"
                 value={form.usage_limit}
@@ -166,7 +166,7 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
               />
             </div>
             <div className="space-y-2">
-              <Label>মেয়াদ শেষ</Label>
+              <Label>Valid Until</Label>
               <Input
                 type="date"
                 value={form.valid_until}
@@ -179,14 +179,14 @@ export const CouponDialog = ({ open, onOpenChange, coupon }: CouponDialogProps) 
               checked={form.is_active}
               onCheckedChange={(v) => setForm({ ...form, is_active: v })}
             />
-            <Label>সক্রিয়</Label>
+            <Label>Active</Label>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              {loading ? "Saving..." : "Save Coupon"}
             </Button>
           </div>
         </form>
