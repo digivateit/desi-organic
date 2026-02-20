@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* অর্গানিক ই-কমার্স ডিজাইন সিস্টেম
+   Natural, earthy organic color palette with Bangla typography
+*/
+
+@layer base {
+  :root {
+    /* Organic Green - Primary brand color */
+    --primary: 134 39% 40%;
+    --primary-foreground: 45 100% 97%;
+    
+    /* Earth Brown - Secondary/accent */
+    --secondary: 30 40% 65%;
+    --secondary-foreground: 30 30% 15%;
+    
+    /* Cream Background */
+    --background: 47 71% 97%;
+    --foreground: 30 30% 15%;
+    
+    /* Card surfaces - slightly warm white */
+    --card: 45 50% 98%;
+    --card-foreground: 30 30% 15%;
+    
+    --popover: 45 50% 98%;
+    --popover-foreground: 30 30% 15%;
+    
+    /* Muted - soft sage */
+    --muted: 90 15% 92%;
+    --muted-foreground: 90 10% 40%;
+    
+    /* Accent - warm terracotta */
+    --accent: 18 60% 55%;
+    --accent-foreground: 45 100% 97%;
+    
+    /* Destructive - natural red */
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 45 100% 97%;
+    
+    /* Borders and inputs */
+    --border: 90 20% 85%;
+    --input: 90 20% 85%;
+    --ring: 134 39% 40%;
+    
+    --radius: 0.75rem;
+    
+    /* Custom organic colors */
+    --organic-green: 134 39% 40%;
+    --organic-green-light: 134 35% 55%;
+    --organic-green-dark: 134 45% 28%;
+    --earth-brown: 30 40% 45%;
+    --cream: 47 71% 97%;
+    --cream-dark: 45 40% 90%;
+    --terracotta: 18 60% 55%;
+    --sage: 90 15% 75%;
+    --moss: 100 25% 35%;
+    
+    /* Gradients */
+    --gradient-organic: linear-gradient(135deg, hsl(134 39% 40%), hsl(100 25% 35%));
+    --gradient-earth: linear-gradient(135deg, hsl(30 40% 65%), hsl(18 60% 55%));
+    --gradient-cream: linear-gradient(180deg, hsl(47 71% 97%), hsl(45 40% 92%));
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(134 39% 40% / 0.15);
+    --shadow-card: 0 2px 12px -2px hsl(30 30% 15% / 0.08);
+    --shadow-hover: 0 8px 30px -8px hsl(134 39% 40% / 0.25);
+    
+    /* Sidebar */
+    --sidebar-background: 45 50% 98%;
+    --sidebar-foreground: 30 30% 15%;
+    --sidebar-primary: 134 39% 40%;
+    --sidebar-primary-foreground: 45 100% 97%;
+    --sidebar-accent: 90 15% 92%;
+    --sidebar-accent-foreground: 30 30% 15%;
+    --sidebar-border: 90 20% 85%;
+    --sidebar-ring: 134 39% 40%;
+  }
+
+  .dark {
+    --primary: 134 45% 55%;
+    --primary-foreground: 30 30% 10%;
+    
+    --secondary: 30 35% 40%;
+    --secondary-foreground: 45 50% 95%;
+    
+    --background: 30 20% 8%;
+    --foreground: 45 30% 92%;
+    
+    --card: 30 18% 12%;
+    --card-foreground: 45 30% 92%;
+    
+    --popover: 30 18% 12%;
+    --popover-foreground: 45 30% 92%;
+    
+    --muted: 30 15% 18%;
+    --muted-foreground: 45 15% 60%;
+    
+    --accent: 18 50% 45%;
+    --accent-foreground: 45 50% 95%;
+    
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 45 50% 95%;
+    
+    --border: 30 15% 20%;
+    --input: 30 15% 20%;
+    --ring: 134 45% 55%;
+    
+    --organic-green: 134 45% 55%;
+    --organic-green-light: 134 40% 65%;
+    --organic-green-dark: 134 50% 40%;
+    --earth-brown: 30 35% 55%;
+    --cream: 45 30% 15%;
+    --cream-dark: 45 25% 12%;
+    --terracotta: 18 50% 50%;
+    --sage: 90 15% 35%;
+    --moss: 100 25% 45%;
+    
+    --sidebar-background: 30 18% 10%;
+    --sidebar-foreground: 45 30% 92%;
+    --sidebar-primary: 134 45% 55%;
+    --sidebar-primary-foreground: 30 30% 10%;
+    --sidebar-accent: 30 15% 18%;
+    --sidebar-accent-foreground: 45 30% 92%;
+    --sidebar-border: 30 15% 20%;
+    --sidebar-ring: 134 45% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-bangla antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-organic {
+    background: linear-gradient(135deg, hsl(var(--organic-green)), hsl(var(--moss)));
+  }
+  
+  .gradient-earth {
+    background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--terracotta)));
+  }
+  
+  .shadow-organic {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-organic-hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  /* Sliding animation for notification bar */
+  @keyframes slide-left {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-slide-left {
+    animation: slide-left 20s linear infinite;
+  }
+
+  /* Fade in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  /* Stagger children animation */
+  .stagger-children > * {
+    opacity: 0;
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+}
